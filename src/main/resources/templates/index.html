@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <title>Strona główna</title>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="toolbar">
+            <div class="tb-container">
+                <div class="tbc-left">
+                    <button><span class="material-icons-sharp">apps</span></button>
+                    <span>NAME</span>
+                </div>
+                <div class="tbc-middle">
+                    <input type="text"/>
+                </div>
+                <div class="tbc-right">
+                    <button><span class="material-icons-sharp">build</span></button>
+                    <button><span class="material-icons-sharp">notifications</span></button>
+                    <button><span class="material-icons-sharp">person</span></button>
+                </div>
+
+
+
+            </div>
+        </div>
+        <div id="content">
+            <div id="sidebar" class="content-element">Sidebar</div>
+            <div id="page" class="content-element">Content</div>
+        </div>
+    </div>
+</body>
+</html>
