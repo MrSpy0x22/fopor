@@ -1,10 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
 </head>
 <body>
+<body>
+        <div th:fragment="toolbar" class="tb-container">
+            <div class="tbc-left">
+                <button><span class="material-icons-sharp">apps</span></button>
+                <span>NAME</span>
+            </div>
+            <div class="tbc-middle">
+                <input type="text"/>
+            </div>
+            <div class="tbc-right">
+                <button><span class="material-icons-sharp">build</span></button>
+                <button><span class="material-icons-sharp">notifications</span></button>
+                <button><span class="material-icons-sharp">person</span></button>
+            </div>
 
+
+
+        </div>
 </body>
 </html>

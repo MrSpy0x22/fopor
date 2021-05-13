@@ -35,7 +35,9 @@ public class Category {
     @CreationTimestamp
     LocalDateTime categoryCreationTime;
 
-    @ManyToOne(optional = false , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+    // TODO temporary allow null
+    //@ManyToOne(optional = false , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+    @ManyToOne(optional = true , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_category_creator")
     User categoryCreator;
 

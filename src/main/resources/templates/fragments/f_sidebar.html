@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+</head>
+<body>
+<body>
+<div th:fragment="sidebar" id="sidebar" class="content-element">
+    <nav class="s-nav">
+        <li>
+            <a href="#">
+                <span class="material-icons-sharp">home</span>
+                <span style="padding-left:5px;">Strona główna</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <span class="material-icons-sharp">fiber_new</span>
+                <span style="padding-left:5px;">Nowości</span>
+            </a>
+        </li>
+        <li>
+            <a href="#"><span class="material-icons-sharp">view_module</span>
+                <span style="padding-left:5px;">Kategorie</span>
+            </a>
+        </li>
+    </nav>
+</div>
+</body>
+</html>
