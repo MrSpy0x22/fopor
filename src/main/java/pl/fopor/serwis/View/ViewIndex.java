@@ -13,7 +13,7 @@ public class ViewIndex {
     }
 
     @GetMapping("/index")
-    public String getIndex() {
+    public String getPage() {
         return "index";
     }
 }

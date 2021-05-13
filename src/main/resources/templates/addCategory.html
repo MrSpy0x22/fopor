@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <title>Nowa kategoria</title>
+</head>
+<body>
+<div id="wrapper">
+    <div id="toolbar">
+        <div class="tb-container">
+            <div class="tbc-left">
+                <button><span class="material-icons-sharp">apps</span></button>
+                <span>NAME</span>
+            </div>
+            <div class="tbc-middle">
+                <input type="text"/>
+            </div>
+            <div class="tbc-right">
+                <button><span class="material-icons-sharp">build</span></button>
+                <button><span class="material-icons-sharp">notifications</span></button>
+                <button><span class="material-icons-sharp">person</span></button>
+            </div>
+
+
+
+        </div>
+    </div>
+    <div id="content">
+        <div id="sidebar" class="content-element">
+            <nav class="s-nav">
+                <li>
+                    <a href="#">
+                        <span class="material-icons-sharp">home</span>
+                        <span style="padding-left:5px;">Strona główna</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="material-icons-sharp">fiber_new</span>
+                        <span style="padding-left:5px;">Nowości</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#"><span class="material-icons-sharp">view_module</span>
+                        <span style="padding-left:5px;">Kategorie</span>
+                    </a>
+                </li>
+            </nav>
+        </div>
+        <div id="page" class="content-element">
+            <div>
+                <form th:object="${category}" th:action="#{/addcategory}" method="post">
+                    <select th:field="*{categoryAccent}" name="cat_accent">
+                        <option value="0">black</option>
+                    </select>
+                    <select th:field="*{categoryType}" name="cat_type">
+                        <option th:each="ct : ${T(pl.fopor.serwis.model.CategoryType).values()}"
+                            th:value="${ct}" th:text="${ct}"></option>
+                    </select>
+                    <input th:field="*{categoryName}" type="text" name="cat_name">
+                    <input type="submit" name="cat_submit">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

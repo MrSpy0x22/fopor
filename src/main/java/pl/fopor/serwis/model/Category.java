@@ -26,6 +26,12 @@ public class Category {
     @Size(min = 2 , max = 32 , message = "Podaj wartość z przedziału {min}..{max}")
     String categoryName;
 
+    @NotNull(message = "To pole jest wymagane")
+    long categoryAccent;
+
+    @NotNull(message = "To pole jest wymagane")
+    CategoryType categoryType;
+
     @CreationTimestamp
     LocalDateTime categoryCreationTime;
 

@@ -1,4 +1,3 @@
-* { box-sizing: border-box; }
 :root {
     --accent-color: #0048BA;
     --accent-f-color: #FFFFFF;
@@ -6,19 +5,21 @@
     --panel-f-color: #000000;
 }
 
-body {
+body , html {
     margin: 0;
     padding: 0;
+}
 
-    height: 100vh;
+* { box-sizing: border-box; }
 
+body {
     color: black;
     background: #FAF9F8;
     font: 14px/1.4 sans-serif;
 }
 
 #wrapper {
-    height: 100%;
+    height: 100vh;
 }
 
 #toolbar {
@@ -63,4 +64,27 @@ body {
 .content-element {
     display: flex;
     flex-direction: column;
+}
+
+.s-nav {
+    height: 100%;
+}
+
+.s-nav > li {
+    padding: 5px 5px;
+    line-height: 32px;
+}
+
+.s-nav > li > a {
+    display: block;
+    padding-left: 5px;
+    text-decoration: none;
+}
+
+.s-nav > li > a > span {
+    font-size: 32px;
+}
+
+.material-icons-sharp {
+    vertical-align: middle;
 }
