@@ -1,5 +1,6 @@
 :root {
-    --accent-color: #0048BA;
+    --accent-color: #2d65bf;
+    --accent-h-color: #4475C2;
     --accent-f-color: #FFFFFF;
     --panel-color: #FFFFFF;
     --panel-f-color: #000000;
@@ -14,7 +15,7 @@ body , html {
 
 body {
     color: black;
-    background: #FAF9F8;
+    background: #EEE;
     font: 14px/1.4 sans-serif;
 }
 
@@ -40,8 +41,37 @@ body {
     height: 100%;
 }
 
+.tb-button {
+    background: transparent;
+    color: var(--accent-f-color);
+    border: 0;
+    cursor: pointer;
+}
+
+.tb-button:hover {
+    background: var(--accent-color);
+}
+
 .tbc-left , .tbc-middle , .tbc-right {
     display: flex;
+}
+
+.tbc-middle {
+    width: 40%;
+}
+
+.tb-form {
+
+}
+
+.tb-form > input {
+    border: none;
+    border-radius: 5px;
+}
+
+.tbf-search {
+    margin: 5px 0;
+    width: 100%;
 }
 
 #content {
@@ -87,4 +117,15 @@ body {
 
 .material-icons-sharp {
     vertical-align: middle;
+}
+
+.ce-container {
+    display: flex;
+    margin: 15px auto;
+    height: 100%;
+    width: 95%;
+    max-width: 1100px;
+    border-radius: 15px;
+    color: var(--panel-f-color);
+    background: var(--panel-color);
 }

@@ -44,6 +44,8 @@ public class User {
     @Email(message = "Nieprawidłowy e-mail")
     String userMail;
 
+    Boolean userEnabled;
+
     @Column(unique = true)
     @Size(max = 16 , message = "Podano za dużo znaków")
     @PhoneNumber(message = "Nieprawidłowy format numeru telefonu")
