@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- METRO4 -->
+    <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
+    <title>Rejestracja</title>
+</head>
+<body class="bg-light"
+      th:with="errored=${(param.error != null) && (param.error[0]) ? true : false}">
+
+<div class="d-flex flex-align-center flex-justify-center w-50 bg-grayWhite border border-size-1 bd-darkGray pos-absolute pos-center">
+
+    <form method="post" th:action="@{/register}" class="p-3 w-100" th:object="${user}">
+
+        <h2 class="h2">Rejestracja</h2>
+
+        <div class="form-group">
+            <label>Nazwa użytkownika:</label>
+            <input name="u_mail" type="email" data-role="input" placeholder="user@example.com">
+            <small th:if="${errored}" class="text-muted alert">Nieprawidłowe dane logowania.</small>
+            <small th:unless="${errored}" class="text-muted">Adres email jest nazwą użytkownika, którą będziesz się logować.</small>
+        </div>
+
+        <div class="form-group">
+            <label>Hasło:</label>
+            <input name="u_passwd" type="password" data-role="input">
+        </div>
+
+        <div class="form-group">
+            <label>Powtórz hasło:</label>
+            <input id="login_passwd2" type="password" data-role="input">
+        </div>
+
+        <div class="form-group">
+            <label>Wyświetlana nazwa:</label>
+            <input name="u_name" type="text" data-role="input">
+            <small class="text-muted">Wartość w tym polu będzie wyświetlana na stronie jako Twoja nazwa użytkownika..</small>
+        </div>
+
+        <div class="form-group">
+            <label>Nr telefonu:</label>
+            <input name="u_phone" type="text" data-role="input">
+            <small class="text-muted">Podaj, jeżeli chcesz aby inni użytkownicy mogli się z Tobą kontaktować telefonicznie.</small>
+        </div>
+
+        <div class="form-group">
+            <input id="login_accept" name="u_accept" type="checkbox"
+                   data-role="checkbox" data-caption="Potwierdzam, że zapoznałem się z zasadami itp.">
+        </div>
+        <div class="form-group">
+            <input type="submit" class="button primary" value="Utwórz" >
+            <a th:href="@{/login}" class="button secondary outline">Mam już konto</a>
+        </div>
+    </form>
+</div>
+
+<!-- METRO4 -->
+<script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
+</body>
+</html>

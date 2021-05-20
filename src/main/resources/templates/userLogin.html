@@ -1,35 +1,51 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- BOOTSTRAP -->
-        <link th:href="@{/webjars/bootstrap/5.0.1/css/bootstrap.css}" th:rel="stylesheet">
-        <title>Logowanie</title>
-    </head>
-    <body class="bg-light"
-          th:with="errored=${(param.error != null) && (param.error[0]) ? true : false}">
+    <!-- METRO4 -->
+    <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
+    <title>Logowanie</title>
+</head>
+<body class="bg-light"
+      th:with="errored=${(param.error != null) && (param.error[0]) ? true : false} ,
+               newUser=${(param.registered!= null) && (param.registered[0]) ? true : false}">
 
-        <div class="h-100 row align-items-center mx-auto w-25 bg-light shadow" style="margin-top: 50px; min-width: 250px;">
-            <form method="post" th:action="@{/login/auth}" class="p-3" >
-                <p class="fs-2">Logowanie</p>
-                <div class="mb-3">
-                    <label for="login_uname" class="form-label">Nazwa użytkownika:</label>
-                    <input id="login_uname" name="u_name" type="email" placeholder="user@example.com"
-                        th:class="${errored ? 'form-control is-invalid' : 'form-control'}" >
-                    <div th:if="${errored}" class="form-text text-danger">Nieprawidłowe dane logowania.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="login_passwd" class="form-label">Hasło:</label>
-                    <input id="login_passwd" name="u_passwd" type="password" class="form-control">
-                </div>
-                <button class="btn btn-primary">Zaloguj</button>
-                <button class="btn btn-link">Reset hasła</button>
-            </form>
+<div class="d-flex flex-align-center flex-justify-center w-25 bg-grayWhite border border-size-1 bd-darkGray pos-absolute pos-center">
+
+    <!-- Login form -->
+    <form method="post" th:action="@{/login/auth}" class="p-3 w-100" >
+        <h2 class="h2">Logowanie</h2>
+
+        <div class="form-group">
+            <div th:if="${newUser}" class="remark success">Teraz możesz się zalogować.</div>
+            <div th:if="${errored}" class="remark alert">Nieprawidłowy login i/lub hasło.</div>
         </div>
 
-        <!-- BOOTSTRAP -->
-        <script th:src="@{/webjars/bootstrap/5.0.1/js/bootstrap.bundle.js}"></script>
-    </body>
+        <!-- E-mail input area -->
+        <div class="form-group">
+            <label>Nazwa użytkownika:</label>
+            <input name="u_name" type="email" class="w-100" data-role="input" placeholder="user@example.com">
+            <small class="text-muted">Nazwa użytkownika to Twój adres e-mail.</small>
+        </div>
+
+        <!-- Password input area -->
+        <div class="form-group">
+            <label>Hasło:</label>
+            <input name="u_passwd" type="password" class="w-100" data-role="input">
+        </div>
+
+        <!-- Buttons area -->
+        <div class="form-group">
+            <input type="submit" class="button primary" value="Logowanie">
+            <a th:href="@{/register}" class="button secondary">Rejestracja</a>
+            <a th:href="@{/remind}" class="button secondary outline">Odzyskiwanie</a>
+        </div>
+    </form>
+</div>
+
+<!-- METRO4 -->
+<script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
+</body>
 </html>

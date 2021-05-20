@@ -32,16 +32,16 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/user*").hasAuthority("ADMIN")
+                .antMatchers("/admin*").hasAuthority("ADMIN")
 
-                .antMatchers("/css/**" , "/webjars/**" , "/login*" , "/logout")
+                .antMatchers("/css/**" , "/js/**" , "/remind" , "/register" , "/login*" , "/logout")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
                 .formLogin()
                 .loginPage("/login")
-                .usernameParameter("user_name")
+                .usernameParameter("user_mail")
                 .passwordParameter("user_password")
                 .loginProcessingUrl("/login/auth")
                 .failureUrl("/login?error=true")
