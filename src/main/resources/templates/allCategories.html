@@ -3,30 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/toolbar.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/tableview.css}">
 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <!-- METRO4 -->
+    <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
+
     <title>Lista kategorii</title>
 </head>
 <body>
-<div id="wrapper">
-    <!-- TOOLBAR -->
-    <div th:insert="fragments/f_toolbar :: toolbar" id="toolbar"></div>
+    <header th:replace="fragments/f_toolbar :: toolbar"></header>
 
-    <!-- PAGE CONTENT -->
-    <div id="content">
-
+    <!-- PAGE WRAPPER -->
+    <div id="wrapper">
         <!-- SIDEBAR -->
-        <div th:replace="fragments/f_sidebar :: sidebar"></div>
+        <div th:replace="fragments/f_sidebar :: sidebar(active_item='categories')"></div>
 
         <!-- CONTENT OF CURRENT VIEW -->
         <div id="page" class="content-element">
-            <div>
-                <ul >
-                    <li th:each="c : ${catList}" th:text="${c.getCategoryName()}"></li>
-                </ul>
+
+            <div class="ce-container">
+                <div class="c-panel">
+                    <div data-role="accordion" data-role-accordin="true" data-one-frame="false">
+                        <div class="frame">
+                            <div class="heading" style="background: transparent;">Filtrowanie</div>
+                            <div class="content">
+                                <div data-role="bottongroup">
+                                    <button id="btn_size10" class="button">10</button>
+                                    <button id="btn_size25" class="button active">25</button>
+                                    <button id="btn_size50" class="button">50</button>
+                                </div>
+                                <select data-role="select">
+                                    <option>Data</option>
+                                    <option>Nazwa</option>
+                                    <option>Użytkownik</option>
+                                </select>
+                                <button class="button">
+                                    <span class="mif-sort-asc"></span>
+                                </button>
+                                <button class="button">
+                                    <span class="mif-sort-desc"></span>
+                                </button>
+                                <button class="button primary">Filtruj</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="c-panel">
+                    <div class="remark yellow">Nie znaleziono żadnych kategorii.</div>
+                </div>
+<!--                <div class="table-view panel">-->
+<!--                    <div th:each="c : ${catList}" class="tv-row">-->
+<!--                        <div class="tv-cell" th:text="${c.getCategoryName()}"></div>-->
+<!--                        <div class="tv-cell" th:text="${c.getCategoryCreator().getUserName()}"></div>-->
+<!--                        <div class="tv-cell" th:text="${c.getCategoryCreationTime()}"></div>-->
+<!--                    </div>-->
+<!--                </div>-->
             </div>
+
         </div>
     </div>
-</div>
+
+    <!-- METRO4 -->
+    <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
+
+    <script>
+        let size = 10;
+        let sort = 0;
+        let order = 0;
+        $("#btn_size10").click(function () { size = 10;} );
+        $("#btn_size25").click(function () { size = 25;} );
+        $("#btn_size50").click(function () { size = 50;} );
+        $(document).ready(function () {
+            console.log("lololo");
+        });
+    </script>
+
 </body>
 </html>

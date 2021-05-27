@@ -19,14 +19,14 @@
 
         <div class="form-group">
             <label>Nazwa użytkownika:</label>
-            <input name="u_mail" type="email" data-role="input" placeholder="user@example.com">
+            <input th:field="*{userMail}" type="email" data-role="input" placeholder="user@example.com">
             <small th:if="${errored}" class="text-muted alert">Nieprawidłowe dane logowania.</small>
             <small th:unless="${errored}" class="text-muted">Adres email jest nazwą użytkownika, którą będziesz się logować.</small>
         </div>
 
         <div class="form-group">
             <label>Hasło:</label>
-            <input name="u_passwd" type="password" data-role="input">
+            <input th:field="*{userPassword}" type="password" data-role="input">
         </div>
 
         <div class="form-group">
@@ -36,13 +36,13 @@
 
         <div class="form-group">
             <label>Wyświetlana nazwa:</label>
-            <input name="u_name" type="text" data-role="input">
+            <input th:field="*{userName}" type="text" data-role="input">
             <small class="text-muted">Wartość w tym polu będzie wyświetlana na stronie jako Twoja nazwa użytkownika..</small>
         </div>
 
         <div class="form-group">
             <label>Nr telefonu:</label>
-            <input name="u_phone" type="text" data-role="input">
+            <input th:field="*{userPhoneNumber}" type="text" data-role="input">
             <small class="text-muted">Podaj, jeżeli chcesz aby inni użytkownicy mogli się z Tobą kontaktować telefonicznie.</small>
         </div>
 

@@ -36,6 +36,8 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/css/**" , "/js/**" , "/remind" , "/register" , "/login*" , "/logout")
                 .permitAll()
+                .antMatchers("/index" , "/" , "/categories")
+                .permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()

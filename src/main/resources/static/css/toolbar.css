@@ -1,0 +1,25 @@
+
+#toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: var(--tb-height);
+    width: 100%;
+
+    background: var(--theme-clr-primary);
+    color: var(--theme-clr-primary-fg);
+
+    z-index: 100;
+}
+
+.tb-logo {
+    float: left;
+}
+
+.tb-buttons {
+    float: right;
+}
+
+.tb-userArea {
+    float: right;
+}

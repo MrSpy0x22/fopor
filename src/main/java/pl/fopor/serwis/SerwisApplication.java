@@ -21,7 +21,7 @@ public class SerwisApplication {
             e.printStackTrace();
         }
 
-             SpringApplication.run(SerwisApplication.class, args);
+        SpringApplication.run(SerwisApplication.class, args);
     }
 
 }

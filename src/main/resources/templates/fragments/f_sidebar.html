@@ -3,30 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
-
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <title>Sidebar</title>
 </head>
 <body>
-<body>
-<div th:fragment="sidebar" id="sidebar" class="content-element">
+<div th:fragment="sidebar(active_item)" id="sidebar">
     <nav class="s-nav">
-        <li>
-            <a href="#">
-                <span class="material-icons-sharp">home</span>
-                <span style="padding-left:5px;">Strona główna</span>
-            </a>
-        </li>
-        <li>
-            <a href="#">
-                <span class="material-icons-sharp">fiber_new</span>
-                <span style="padding-left:5px;">Nowości</span>
-            </a>
-        </li>
-        <li>
-            <a href="#"><span class="material-icons-sharp">view_module</span>
-                <span style="padding-left:5px;">Kategorie</span>
-            </a>
-        </li>
+        <ul>
+            <li><a th:href="@{/index}" th:class="${active_item == 'index' ? 's-item-active' : ''}">
+                <span class="mif-home mif-lg"></span>
+                <span class="s-item-text">Strona główna</span>
+            </a></li>
+            <li><a th:href="@{/search}" th:class="${active_item == 'search' ? 's-item-active' : ''}">
+                <span class="mif-search mif-lg"></span>
+                <span class="s-item-text">Wyszukiwarka</span>
+            </a></li>
+            <li><a th:href="@{/news}" th:class="${active_item == 'news' ? 's-item-active' : ''}">
+                <span class="mif-bell mif-lg"></span>
+                <span class="s-item-text">Nowości</span>
+            </a></li>
+            <li><a th:href="@{/categories}" th:class="${active_item == 'categories' ? 's-item-active' : ''}">
+                <span class="mif-apps mif-lg"></span>
+                <span class="s-item-text">Kategorie</span>
+            </a></li>
+            <li><a th:href="@{/unsolved}" th:class="${active_item == 'unsolved' ? 's-item-active' : ''}">
+                <span class="mif-help mif-lg"></span>
+                <span class="s-item-text">Bez rozwiązania</span>
+            </a></li>
+            <li><a th:href="@{/saved}" th:class="${active_item == 'bookmarks' ? 's-item-active' : ''}">
+                <span class="mif-bookmark mif-lg"></span>
+                <span class="s-item-text">Zapisane</span>
+            </a></li>
+            <li><a th:href="@{/users}" th:class="${active_item == 'users' ? 's-item-active' : ''}">
+                <span class="mif-users mif-lg2x"></span>
+                <span class="s-item-text">Użytkownicy</span>
+            </a></li>
+        </ul>
     </nav>
 </div>
 </body>

@@ -3,29 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/toolbar.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/sidebar.css}">
 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <!-- METRO4 -->
+    <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
+
     <title>Strona główna</title>
 </head>
 <body>
+    <header th:replace="fragments/f_toolbar :: toolbar"></header>
+
+    <!-- PAGE WRAPPER -->
     <div id="wrapper">
-        <!-- TOOLBAR -->
-        <div th:insert="fragments/f_toolbar :: toolbar" id="toolbar"></div>
+        <!-- SIDEBAR -->
+        <div th:replace="fragments/f_sidebar :: sidebar(active_item='index')"></div>
 
-        <!-- PAGE CONTENT -->
-        <div id="content">
+        <!-- CONTENT OF CURRENT VIEW -->
+        <div id="page" class="content-element">
 
-            <!-- SIDEBAR -->
-            <div th:replace="fragments/f_sidebar :: sidebar"></div>
-
-            <!-- CONTENT OF CURRENT VIEW -->
-            <div id="page" class="content-element">
-
-                <div class="ce-container">
-                </div>
-
+            <div class="ce-container">
             </div>
+
         </div>
     </div>
+
+    <!-- METRO4 -->
+    <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
+
 </body>
 </html>
