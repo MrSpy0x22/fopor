@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<!---------- HEAD SECTION ---------->
+<head>
+    <!-- STYLES -->
+    <meta charset="UTF-8">
+    <!-- STYLES -->
+    <link type="text/css" rel="stylesheet" th:href="@{/css/popup.css}">
+    <!-- METRO4 CSS -->
+    <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
+    <!-- TITLE -->
+    <title>Kategoria</title>
+</head>
+<!---------- HEAD SECTION ---------->
+<body>
+<div class="">
+    <h2>Popup</h2>
+    <form method="post" th:action="@{/category}" th:object="${category}">
+        <div class="form-group">
+            <label>Nazwa:</label>
+            <input th:field="*{categoryName}" type="text" data-prepend="<span class='mif-tag'></span>" data-role="input" placeholder="podaj nazwę">
+        </div>
+        <div class="form-group">
+            <label>Ikona:</label>
+            <select th:field="*{categoryIcon}" data-role="select"></select>
+        </div>
+        <div class="form-group">
+            <label>Akcent:</label>
+            <input th:field="*{categoryAccent}" type="color" data-prepend="<span class='mif-paint'></span>" data-role="input" placeholder="podaj nazwę">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="button primary">
+                <span class='mif-add'></span>
+                <span>Dodaj</span>
+            </button>
+            <button class="button">Wyjście</button>
+        </div>
+    </form>
+</div>
+
+<!-- METRO4 -->
+<script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
+
+</body>
+</html>

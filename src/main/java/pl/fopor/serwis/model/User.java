@@ -29,27 +29,21 @@ public class User {
     @NotNull(message = "Hasło jest polem obowiązkowym")
     String userPassword;
 
-    @NotEmpty(message = "Error")
-    @NotNull(message = "Ranga jest polem obowiązkowym")
     String userRole;
 
     @Column(unique = true)
+    @Size(min = 2 , max = 32 , message = "To pole musi zawierać {min}-{max} znaków.")
     @NotNull(message = "Nazwa użytkownika jest polem obowiązkowym")
     @UserName(message = "Nieprawidłowa nazwa użytkownika")
     String userName;
 
     @Column(unique = true)
-    @Size(max = 64 , message = "Podano za dużo znaków")
+    @Size(min = 5 , max = 64 , message = "To pole musi zawierać {min}-{max} znaków.")
     @NotNull(message = "E-mail jest polem obowiązkowym")
     @Email(message = "Nieprawidłowy e-mail")
     String userMail;
 
     Boolean userEnabled;
-
-    @Column(unique = true)
-    @Size(max = 16 , message = "Podano za dużo znaków")
-    @PhoneNumber(message = "Nieprawidłowy format numeru telefonu")
-    String userPhoneNumber;
 
     @CreationTimestamp
     LocalDateTime userJoinTime;

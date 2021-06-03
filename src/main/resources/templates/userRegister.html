@@ -20,13 +20,14 @@
         <div class="form-group">
             <label>Nazwa użytkownika:</label>
             <input th:field="*{userMail}" type="email" data-role="input" placeholder="user@example.com">
-            <small th:if="${errored}" class="text-muted alert">Nieprawidłowe dane logowania.</small>
-            <small th:unless="${errored}" class="text-muted">Adres email jest nazwą użytkownika, którą będziesz się logować.</small>
+            <small class="text-muted">Adres email jest nazwą użytkownika, którą będziesz się logować.</small>
+            <small th:if="${#fields.hasErrors('userMail')}" th:errors="*{userMail}" class="fg-red">Błąd!</small>
         </div>
 
         <div class="form-group">
             <label>Hasło:</label>
             <input th:field="*{userPassword}" type="password" data-role="input">
+            <small th:if="${#fields.hasErrors('userPassword')}" th:errors="*{userPassword}" class="fg-red">Błąd!</small>
         </div>
 
         <div class="form-group">
@@ -38,12 +39,7 @@
             <label>Wyświetlana nazwa:</label>
             <input th:field="*{userName}" type="text" data-role="input">
             <small class="text-muted">Wartość w tym polu będzie wyświetlana na stronie jako Twoja nazwa użytkownika..</small>
-        </div>
-
-        <div class="form-group">
-            <label>Nr telefonu:</label>
-            <input th:field="*{userPhoneNumber}" type="text" data-role="input">
-            <small class="text-muted">Podaj, jeżeli chcesz aby inni użytkownicy mogli się z Tobą kontaktować telefonicznie.</small>
+            <small th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" class="fg-red">Błąd!</small>
         </div>
 
         <div class="form-group">

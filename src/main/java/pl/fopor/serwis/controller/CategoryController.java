@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/api/category")
 public class CategoryController implements ControllerTpl<Category> {
     private final CategoryService categoryService;
 
@@ -28,7 +28,7 @@ public class CategoryController implements ControllerTpl<Category> {
         return categoryService.getId(id).orElse(null);
     }
 
-    @GetMapping
+    @GetMapping("")
     @Override
     public Page<Category> getPageOf(Pageable pageable) {
         return categoryService.getPage(pageable);

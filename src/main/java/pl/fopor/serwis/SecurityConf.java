@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConf extends WebSecurityConfigurerAdapter {
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     @Autowired
     public SecurityConf(DataSource dataSource) {
@@ -32,12 +32,12 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/admin*").hasAuthority("ADMIN")
-
+                .antMatchers("/category*").authenticated()
+                .antMatchers("/api/**").permitAll()
+                .antMatchers("/category*").authenticated()
                 .antMatchers("/css/**" , "/js/**" , "/remind" , "/register" , "/login*" , "/logout")
                 .permitAll()
-                .antMatchers("/index" , "/" , "/categories")
-                .permitAll()
+                .antMatchers("/index" , "/" , "/categories").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
@@ -47,12 +47,12 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
                 .passwordParameter("user_password")
                 .loginProcessingUrl("/login/auth")
                 .failureUrl("/login?error=true")
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/index")
                 .permitAll()
                 .and()
                 .logout().logoutUrl("/logout")
                 .and()
-                .exceptionHandling().accessDeniedPage("/access_danied")
+                .exceptionHandling().accessDeniedPage("/error")
                 .and()
                 .headers().contentTypeOptions();
     }

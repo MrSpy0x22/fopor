@@ -1,11 +1,11 @@
 .table-view {
-
+    margin: 10px;
 }
 
 .tv-row {
-    display: block;
+    display: flex;
 }
 
 .tv-cell {
-    display: inline-block;
+    display: flex
 }

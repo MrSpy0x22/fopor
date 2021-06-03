@@ -12,40 +12,40 @@
       th:with="errored=${(param.error != null) && (param.error[0]) ? true : false} ,
                newUser=${(param.registered!= null) && (param.registered[0]) ? true : false}">
 
-<div class="d-flex flex-align-center flex-justify-center w-25 bg-grayWhite border border-size-1 bd-darkGray pos-absolute pos-center">
+    <div class="d-flex flex-align-center flex-justify-center w-25 bg-grayWhite border border-size-1 bd-darkGray pos-absolute pos-center">
 
-    <!-- Login form -->
-    <form method="post" th:action="@{/login/auth}" class="p-3 w-100" >
-        <h2 class="h2">Logowanie</h2>
+        <!-- Login form -->
+        <form method="post" th:action="@{/login/auth}" class="p-3 w-100" >
+            <h2 class="h2">Logowanie</h2>
 
-        <div class="form-group">
-            <div th:if="${newUser}" class="remark success">Teraz możesz się zalogować.</div>
-            <div th:if="${errored}" class="remark alert">Nieprawidłowy login i/lub hasło.</div>
-        </div>
+            <div class="form-group">
+                <div th:if="${newUser}" class="remark success">Teraz możesz się zalogować.</div>
+                <div th:if="${errored}" class="remark alert">Nieprawidłowy login i/lub hasło.</div>
+            </div>
 
-        <!-- E-mail input area -->
-        <div class="form-group">
-            <label>Nazwa użytkownika:</label>
-            <input name="u_name" type="email" class="w-100" data-role="input" placeholder="user@example.com">
-            <small class="text-muted">Nazwa użytkownika to Twój adres e-mail.</small>
-        </div>
+            <!-- E-mail input area -->
+            <div class="form-group">
+                <label>Nazwa użytkownika:</label>
+                <input name="user_mail" type="email" class="w-100" data-role="input" placeholder="user@example.com">
+                <small class="text-muted">Nazwa użytkownika to Twój adres e-mail.</small>
+            </div>
 
-        <!-- Password input area -->
-        <div class="form-group">
-            <label>Hasło:</label>
-            <input name="u_passwd" type="password" class="w-100" data-role="input">
-        </div>
+            <!-- Password input area -->
+            <div class="form-group">
+                <label>Hasło:</label>
+                <input name="user_password" type="password" class="w-100" data-role="input">
+            </div>
 
-        <!-- Buttons area -->
-        <div class="form-group">
-            <input type="submit" class="button primary" value="Logowanie">
-            <a th:href="@{/register}" class="button secondary">Rejestracja</a>
-            <a th:href="@{/remind}" class="button secondary outline">Odzyskiwanie</a>
-        </div>
-    </form>
-</div>
+            <!-- Buttons area -->
+            <div class="form-group">
+                <button class="button primary">Zaloguj</button>
+                <a th:href="@{/register}" class="button secondary">Rejestracja</a>
+                <a th:href="@{/remind}" class="button secondary outline">Odzyskiwanie</a>
+            </div>
+        </form>
+    </div>
 
-<!-- METRO4 -->
-<script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
+    <!-- METRO4 -->
+    <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
 </body>
 </html>

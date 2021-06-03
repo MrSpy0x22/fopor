@@ -45,39 +45,97 @@
                                 <button class="button">
                                     <span class="mif-sort-desc"></span>
                                 </button>
-                                <button class="button primary">Filtruj</button>
+                                <button id="cat-load" class="button primary">Filtruj</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="c-panel">
-                    <div class="remark yellow">Nie znaleziono żadnych kategorii.</div>
+                    <table id="table" class="table stripped row-hover">
+                        <thead>
+                        <tr>
+                            <th> </th>
+                            <th>Nazwa</th>
+                            <th>Twórca</th>
+                            <th>Data utworzenia</th>
+                        </tr>
+                        </thead>
+                        <tbody id="trows">
+
+                        </tbody>
+                    </table>
                 </div>
-<!--                <div class="table-view panel">-->
-<!--                    <div th:each="c : ${catList}" class="tv-row">-->
-<!--                        <div class="tv-cell" th:text="${c.getCategoryName()}"></div>-->
-<!--                        <div class="tv-cell" th:text="${c.getCategoryCreator().getUserName()}"></div>-->
-<!--                        <div class="tv-cell" th:text="${c.getCategoryCreationTime()}"></div>-->
-<!--                    </div>-->
-<!--                </div>-->
             </div>
 
         </div>
     </div>
 
+    <button id="cat-add" class="action-button primary" style="position:fixed;margin:20px;bottom:0;right:0;">
+        <span class="icon"><span class="mif-plus"></span></span>
+    </button>
+
     <!-- METRO4 -->
     <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
 
     <script>
-        let size = 10;
-        let sort = 0;
-        let order = 0;
-        $("#btn_size10").click(function () { size = 10;} );
-        $("#btn_size25").click(function () { size = 25;} );
-        $("#btn_size50").click(function () { size = 50;} );
-        $(document).ready(function () {
-            console.log("lololo");
-        });
+        function notifyError(text) {
+            let notify = Metro.notify;
+            console.error(text);
+
+            if (notify !== undefined) {
+                notify.create(text , "Błąd" , { cls: "alert" });
+            }
+        }
+
+        let pageNumber = 0;
+        let pageSize = 10;
+        let pageSort = 0;
+        let pageOrder = "asc";
+        $("#btn_size10").click(function () { pageSize = 10; } );
+        $("#btn_size25").click(function () { pageSize = 25; } );
+        $("#btn_size50").click(function () { pageSize = 50; } );
+        $(document).ready(() => { getCategories() });
+        $("#cat-load").click(() => getCategories());
+        $("#cat-add").click(() => categoryPopup());
+
+        function getCategories() {
+            $.ajax({
+                type: "GET" ,
+                async: true ,
+                url: "/api/category/" ,
+                timeout: 1000 ,
+                //url: `/api/category?page=${pageNumber}&size=${pageSize}&order=${pageOrder === "desc" ? "desc" : "asc"}&sort=${pageSort}` ,
+                contentType: 'application/json; charset=utf-8'
+            }).then(function (result) {
+                $("#trows").clear();
+
+                if (typeof result === "string") {
+                    let objects = JSON.parse(result).content;
+                    console.log(objects);
+                    if (objects === undefined) {
+                        notifyError("Błąd przetwarzania obiektu.");
+                    } else {
+                        objects.forEach((o) => {
+                            console.log(o);
+                            let row = $("<tr>" , {id: "cat" + o.categoryId});
+                            $(row).append($("<td>").append($("<span>" , {class: "mif-" + o.categoryIcon})));
+                            $(row).append($("<td>").html(o.categoryName));
+                            $(row).append($("<td>").html(o.categoryCreationCreator));
+                            $(row).append($("<td>").html(o.categoryCreationTime));
+                            $("#trows").append(row);
+                        });
+                    }
+                } else {
+                    notifyError("Serwer zwrócił dane, które nie mogą zostać przetworzone.");
+                }
+            } , function (xhr) {
+                notifyError("Błąd żądania!");
+            });
+        }
+        function categoryPopup(id) {
+            let url = typeof id == "number" && id >= 0 ? `/category?id=${id}` : "/category";
+            window.open(url , "Kategoria" , "width=500, height=600")
+        }
     </script>
 
 </body>

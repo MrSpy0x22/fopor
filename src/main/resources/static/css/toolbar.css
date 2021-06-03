@@ -5,6 +5,7 @@
     left: 0;
     height: var(--tb-height);
     width: 100%;
+    padding: 0 15px;
 
     background: var(--theme-clr-primary);
     color: var(--theme-clr-primary-fg);
@@ -22,4 +23,21 @@
 
 .tb-userArea {
     float: right;
+}
+
+.tb-button {
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    height: var(--tb-height);
+}
+
+.tb-button:hover {
+    background-color: var(--theme-clr-hover);
+}
+
+
+.tb-button > span {
+    line-height: var(--tb-height);
+    padding: 0 10px;
 }

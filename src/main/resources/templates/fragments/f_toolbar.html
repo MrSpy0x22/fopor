@@ -4,13 +4,23 @@
     <meta charset="UTF-8">
     <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/css/toolbar.css}">
+    <title>Toolbar</title>
 </head>
-<body>
 <body>
     <header th:fragment="toolbar" id="toolbar">
         <div class="tb-logo"></div>
         <div class="tb-buttons"></div>
-        <div class="tb-userArea"></div>
+        <div class="tb-userArea">
+            <a href="#" class="tb-button">
+                <span class="mif-tools mif-2x"></span>
+            </a>
+            <a href="#" class="tb-button">
+                <span class="mif-user mif-2x"></span>
+            </a>
+            <a th:href="@{/logout}" class="tb-button">
+                <span class="mif-exit mif-2x"></span>
+            </a>
+        </div>
     </header>
 </body>
 </html>

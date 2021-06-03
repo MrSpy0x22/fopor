@@ -30,7 +30,7 @@ public class Category {
     long categoryAccent;
 
     @NotNull(message = "To pole jest wymagane")
-    CategoryType categoryType;
+    String categoryIcon;
 
     @CreationTimestamp
     LocalDateTime categoryCreationTime;
