@@ -55,18 +55,16 @@
                         <thead>
                         <tr>
                             <th> </th>
+                            <th> </th>
                             <th>Nazwa</th>
                             <th>Twórca</th>
                             <th>Data utworzenia</th>
                         </tr>
                         </thead>
-                        <tbody id="trows">
-
-                        </tbody>
+                        <tbody id="trows"></tbody>
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -116,8 +114,19 @@
                         notifyError("Błąd przetwarzania obiektu.");
                     } else {
                         objects.forEach((o) => {
-                            console.log(o);
                             let row = $("<tr>" , {id: "cat" + o.categoryId});
+                            let buttons = $("<td>");
+
+                            $(buttons).append(
+                                ($("<button>" , { class: "button outline secondary small" , style: "margin-right: 3px" })
+                                    .click(() => categoryPopup(o.categoryId , false)))
+                                        .append($("<span>" , { class: "mif-pencil" })));
+                            $(buttons).append(
+                                ($("<button>" , { class: "button outline alert small" , style: "margin-right: 3px" })
+                                    .click(() => categoryPopup(o.categoryId , false)))
+                                    .append($("<span>" , { class: "mif-bin" })));
+
+                            $(row).append(buttons);
                             $(row).append($("<td>").append($("<span>" , {class: "mif-" + o.categoryIcon})));
                             $(row).append($("<td>").html(o.categoryName));
                             $(row).append($("<td>").html(o.categoryCreationCreator));
@@ -132,8 +141,13 @@
                 notifyError("Błąd żądania!");
             });
         }
-        function categoryPopup(id) {
+        function categoryPopup(id , del) {
             let url = typeof id == "number" && id >= 0 ? `/category?id=${id}` : "/category";
+
+            if (del != null && del) {
+                url += "&delete=true";
+            }
+
             window.open(url , "Kategoria" , "width=500, height=600")
         }
     </script>

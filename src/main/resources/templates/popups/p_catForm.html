@@ -5,41 +5,46 @@
     <!-- STYLES -->
     <meta charset="UTF-8">
     <!-- STYLES -->
-    <link type="text/css" rel="stylesheet" th:href="@{/css/popup.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/popup_dialog.css}">
     <!-- METRO4 CSS -->
     <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
     <!-- TITLE -->
     <title>Kategoria</title>
 </head>
 <!---------- HEAD SECTION ---------->
-<body>
-<div class="">
-    <h2>Popup</h2>
-    <form method="post" th:action="@{/category}" th:object="${category}">
-        <div class="form-group">
-            <label>Nazwa:</label>
-            <input th:field="*{categoryName}" type="text" data-prepend="<span class='mif-tag'></span>" data-role="input" placeholder="podaj nazwę">
-        </div>
-        <div class="form-group">
-            <label>Ikona:</label>
-            <select th:field="*{categoryIcon}" data-role="select"></select>
-        </div>
-        <div class="form-group">
-            <label>Akcent:</label>
-            <input th:field="*{categoryAccent}" type="color" data-prepend="<span class='mif-paint'></span>" data-role="input" placeholder="podaj nazwę">
-        </div>
-        <div class="form-group">
-            <button type="submit" class="button primary">
-                <span class='mif-add'></span>
-                <span>Dodaj</span>
-            </button>
-            <button class="button">Wyjście</button>
-        </div>
-    </form>
-</div>
+<body th:with="del=${#request.getParameter('delete')}">
+    <div>
+        <h3 th:if="${del}" class="alert">Usuń kategorię</h3>
+        <h3 th:unless="${del}" class="primary">Zapisz kategorię</h3>
+        <form method="post" th:action="@{/category}" th:object="${category}" class="mif-light">
+            <div class="form-group">
+                <label>Nazwa:</label>
+                <input th:field="*{categoryName}" type="text" data-prepend="<span class='mif-tag'></span>" data-role="input" placeholder="podaj nazwę">
+            </div>
+            <div class="form-group">
+                <label>Ikona:</label>
+                <select th:field="*{categoryIcon}" data-role="select"></select>
+            </div>
+            <div class="form-group">
+                <label>Akcent:</label>
+                <input th:field="*{categoryAccent}" type="color" data-prepend="<span class='mif-paint'></span>" data-role="input" placeholder="podaj nazwę">
+            </div>
+            <div class="form-group">
+                <button th:if="${del != null && del}" type="submit" class="button alert" name="delete">
+                    <span class='mif-bin'></span>
+                    <span>Usuń</span>
+                </button>
+                <button th:unless="${del}" type="submit" class="button alert">
+                    <span class='mif-floppy-disk'></span>
+                    <span>Zapisz</span>
+                </button>
+                <a class="button">Wyjście</a>
+            </div>
+        </form>
+    </div>
 
-<!-- METRO4 -->
-<script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
+    <!-- METRO4 -->
+    <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
 
 </body>
 </html>
