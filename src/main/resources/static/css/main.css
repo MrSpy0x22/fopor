@@ -5,7 +5,10 @@
     --theme-clr-hover: #5d8bd5;
     --theme-clr-secondary-fg: #fff;
     --theme-clr-background: #dcdcdc;
+    --theme-clr-sidebar: #e6e6e6;
+    --theme-clr-sidebar-br: #c0c0c0;
     --theme-clr-text: #000;
+    --theme-clr-toolbar-sh: #8e8e8e;
     --theme-clr-accent-text: #17389c;
     --theme-clr-panel: #f2f2f2;
     --theme-clr-border: #a3a3a3;
@@ -39,12 +42,6 @@ body {
     flex-direction: column;
     width: 100%;
     padding: 20px;
-}
-
-#sidebar {
-    flex-direction: column;
-    padding-top: 10px;
-    overflow: hidden;
 }
 
 .c-panel {

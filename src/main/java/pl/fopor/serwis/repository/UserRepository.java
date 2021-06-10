@@ -6,4 +6,5 @@ import pl.fopor.serwis.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User , Integer> {
+    User findByUserMail(String name);
 }

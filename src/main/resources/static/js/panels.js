@@ -1,0 +1,1 @@
+$("#sb-btn-add").click(() => window.open("/post" , "Napisz post" , "width=800, height=600"));

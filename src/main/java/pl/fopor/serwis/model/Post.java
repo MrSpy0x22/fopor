@@ -1,5 +1,8 @@
 package pl.fopor.serwis.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -8,6 +11,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class Post {
 
     @Id
