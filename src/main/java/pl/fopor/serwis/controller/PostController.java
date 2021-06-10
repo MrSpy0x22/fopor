@@ -8,6 +8,7 @@ import pl.fopor.serwis.model.Post;
 import pl.fopor.serwis.service.PostService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -52,5 +53,10 @@ public class PostController implements ControllerTpl<Post> {
     @Override
     public boolean deleteId(@PathVariable("id") Integer id) {
         return postService.deleteId(id);
+    }
+
+    @GetMapping("/unresolved")
+    public List<Post> findByPostSolvedFalse() {
+        return postService.findByPostSolvedFalse();
     }
 }
