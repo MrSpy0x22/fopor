@@ -1,5 +1,6 @@
 package pl.fopor.serwis.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,6 +43,7 @@ public class Post {
     @JoinColumn(name = "fk_post_category")
     Category postCategory;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL , fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_post_comments")
     List<Comment> postComments;

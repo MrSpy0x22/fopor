@@ -1,5 +1,6 @@
 package pl.fopor.serwis.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,9 +49,11 @@ public class User {
     @CreationTimestamp
     LocalDateTime userJoinTime;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "postAuthor")
     List<Post> userPosts;
 
+    @JsonIgnore
     @OneToMany
     List<Category> createdCategories;
 

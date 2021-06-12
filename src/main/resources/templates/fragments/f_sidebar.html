@@ -22,13 +22,13 @@
                 <span class="mif-search mif-lg"></span>
                 <span class="s-item-text">Wyszukiwarka</span>
             </a></li>
-            <li><a th:href="@{/news}" th:class="${active_item == 'news' ? 's-item-active' : ''}">
-                <span class="mif-bell mif-lg"></span>
-                <span class="s-item-text">Nowości</span>
-            </a></li>
             <li><a th:href="@{/categories}" th:class="${active_item == 'categories' ? 's-item-active' : ''}">
                 <span class="mif-apps mif-lg"></span>
                 <span class="s-item-text">Kategorie</span>
+            </a></li>
+            <li><a th:href="@{/news}" th:class="${active_item == 'news' ? 's-item-active' : ''}">
+                <span class="mif-chat mif-lg"></span>
+                <span class="s-item-text">Wszystie posty</span>
             </a></li>
             <li><a th:href="@{/unresolved}" th:class="${active_item == 'unresolved' ? 's-item-active' : ''}">
                 <span class="mif-help mif-lg"></span>

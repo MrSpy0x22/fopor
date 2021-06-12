@@ -118,9 +118,9 @@
                         let row = $("<tr>" , {id: "post" + o.postId});
 
                         $(row).append($("<td>").html(o.postTitle));
-                        $(row).append($("<td>").html(o.postAuthor));
-                        $(row).append($("<td>").html(o.postCategory));
+                        $(row).append($("<td>").html(o.postAuthor.userName));
                         $(row).append($("<td>").html(o.postCreationTime));
+                        $(row).append($("<td>").html(o.postCategory.categoryName));
                         $("#trows").append(row);
                     });
                 }

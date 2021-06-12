@@ -1,5 +1,6 @@
 package pl.fopor.serwis.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,7 @@ public class Category {
     @JoinColumn(name = "fk_category_creator")
     User categoryCreator;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "postCategory")
     List<Post> categoryPosts;
 
