@@ -19,7 +19,6 @@ import pl.fopor.serwis.service.UserService;
 
 import javax.validation.Valid;
 
-@Slf4j
 @Controller
 public class ViewLoginRegister {
 
@@ -73,7 +72,6 @@ public class ViewLoginRegister {
                 user.setUserRole("USER");
                 user.setUserEnabled(true);
                 userService.save(user);
-                log.warn(user.toString());
             } catch (HttpStatusCodeException e) {
                 bindResult.rejectValue(null , String.valueOf(e.getStatusCode().value()) , e.getStatusCode().getReasonPhrase());
                 return "userRegister";

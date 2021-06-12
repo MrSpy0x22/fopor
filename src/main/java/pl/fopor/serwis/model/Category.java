@@ -41,10 +41,6 @@ public class Category {
     @JoinColumn(name = "fk_category_creator")
     User categoryCreator;
 
-    @OneToMany(cascade = CascadeType.ALL , fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_category_post")
-    List<Post> categoryPosts;
-
     @Override
     public String toString() {
         return this.categoryName;

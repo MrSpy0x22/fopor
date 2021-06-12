@@ -34,11 +34,11 @@ public class Post {
 
     Boolean postSolved;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "fk_post_author")
     User postAuthor;
 
-    @ManyToOne(cascade = CascadeType.ALL , optional = false)
+    @OneToOne(optional = false)
     @JoinColumn(name = "fk_post_category")
     Category postCategory;
 

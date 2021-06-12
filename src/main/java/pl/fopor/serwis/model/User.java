@@ -48,6 +48,9 @@ public class User {
     @CreationTimestamp
     LocalDateTime userJoinTime;
 
+    @OneToMany(mappedBy = "postAuthor")
+    List<Post> userPosts;
+
     @OneToMany
     List<Category> createdCategories;
 
