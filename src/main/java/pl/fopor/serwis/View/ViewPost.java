@@ -1,7 +1,7 @@
 package pl.fopor.serwis.View;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -17,6 +17,7 @@ import pl.fopor.serwis.model.ContentState;
 import pl.fopor.serwis.model.Post;
 import pl.fopor.serwis.model.User;
 import pl.fopor.serwis.service.CategoryService;
+import pl.fopor.serwis.service.CommentService;
 import pl.fopor.serwis.service.PostService;
 import pl.fopor.serwis.service.UserService;
 
@@ -27,15 +28,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
+@Slf4j
 public class ViewPost {
 
     private final PostService postService;
+    private final CommentService commentService;
     private final CategoryService categoryService;
     private final UserService userService;
 
     @Autowired
-    public ViewPost(PostService postService, CategoryService categoryService, UserService userService) {
+    public ViewPost(PostService postService, CommentService commentService, CategoryService categoryService, UserService userService) {
         this.postService = postService;
+        this.commentService = commentService;
         this.categoryService = categoryService;
         this.userService = userService;
     }
@@ -113,7 +117,25 @@ public class ViewPost {
             }
 
             // Redirect to post
-            return "redirect:/unresolved";
+            return "redirect:/thread?id=" + post.getPostId().toString();
         }
+    }
+
+    @GetMapping(path = "/thread")
+    public String getThreadPage(@RequestParam Integer id , Model model) {
+        Post post;
+
+        if (id == null) {
+            post = new Post();
+        } else {
+            post = postService.getId(id).get();
+        }
+
+        var num = commentService.getCommentForPost(post).size();
+
+        model.addAttribute("post" , post);
+        model.addAttribute("commentsNum" , num);
+
+        return "viewThread";
     }
 }

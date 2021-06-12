@@ -26,6 +26,11 @@ body , html {
     padding: 0;
 }
 
+/* WORKAROUND */
+.textarea, textarea {
+    height: auto !important;
+}
+
 body {
     color: var(--theme-clr-text);
     background: var(--theme-clr-background) !important;
