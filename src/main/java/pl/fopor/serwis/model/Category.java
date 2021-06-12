@@ -35,11 +35,12 @@ public class Category {
     @CreationTimestamp
     LocalDateTime categoryCreationTime;
 
-    // TODO temporary allow null
-    //@ManyToOne(optional = false , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     @ManyToOne(optional = false , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_category_creator")
     User categoryCreator;
+
+    @OneToMany(mappedBy = "postCategory")
+    List<Post> categoryPosts;
 
     @Override
     public String toString() {

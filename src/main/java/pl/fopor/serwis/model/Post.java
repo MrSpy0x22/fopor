@@ -38,7 +38,7 @@ public class Post {
     @JoinColumn(name = "fk_post_author")
     User postAuthor;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "fk_post_category")
     Category postCategory;
 
