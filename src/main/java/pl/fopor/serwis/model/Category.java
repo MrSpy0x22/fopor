@@ -37,7 +37,7 @@ public class Category {
 
     // TODO temporary allow null
     //@ManyToOne(optional = false , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
-    @ManyToOne(optional = true , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+    @ManyToOne(optional = false , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_category_creator")
     User categoryCreator;
 

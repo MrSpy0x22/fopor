@@ -54,7 +54,7 @@ public class PostService implements ServiceTpl<Post> {
         return false;
     }
 
-    public List<Post> findByPostSolvedFalse() {
-        return postRepository.findByPostSolvedFalse();
+    public Page<Post> findByPostSolvedFalse(Pageable pageable) {
+        return postRepository.findByPostSolvedFalse(pageable);
     }
 }

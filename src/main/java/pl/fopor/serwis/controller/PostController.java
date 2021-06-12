@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/Post")
+@RequestMapping("/api/post")
 public class PostController implements ControllerTpl<Post> {
 
     private final PostService postService;
@@ -56,7 +56,7 @@ public class PostController implements ControllerTpl<Post> {
     }
 
     @GetMapping("/unresolved")
-    public List<Post> findByPostSolvedFalse() {
-        return postService.findByPostSolvedFalse();
+    public Page<Post> findByPostSolvedFalse(Pageable pageable) {
+        return postService.findByPostSolvedFalse(pageable);
     }
 }

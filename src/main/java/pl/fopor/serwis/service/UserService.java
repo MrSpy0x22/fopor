@@ -53,4 +53,8 @@ public class UserService implements ServiceTpl<User> {
 
         return false;
     }
+
+    public User getByName(String name) {
+        return userRepository.findByUserMail(name);
+    }
 }

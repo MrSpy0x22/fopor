@@ -1,7 +1,14 @@
-.s-nav {
+
+#sidebar {
     width: var(--sb-width);
-    padding: 0 15px 0 15px;
-    background: var(--theme-clr-background);
+    flex-direction: column;
+    padding: 0 15px;
+    overflow: hidden;
+    background: var(--theme-clr-sidebar);
+    border-right: 1px solid var(--theme-clr-sidebar-br);
+}
+
+.s-nav {
 }
 
 .s-nav > ul {

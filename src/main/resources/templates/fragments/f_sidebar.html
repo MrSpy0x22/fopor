@@ -8,6 +8,10 @@
 </head>
 <body>
 <div th:fragment="sidebar(active_item)" id="sidebar">
+    <a id="sb-btn-add" th:href="@{/write}" class="button primary border-radius-4 w-100" style="margin:10px 0;">
+        <span class="mif-note-add mif-lg"></span>
+        <span class="s-item-text">Napisz</span>
+    </a>
     <nav class="s-nav">
         <ul>
             <li><a th:href="@{/index}" th:class="${active_item == 'index' ? 's-item-active' : ''}">

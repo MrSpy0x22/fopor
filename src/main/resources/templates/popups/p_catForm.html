@@ -14,16 +14,20 @@
 <!---------- HEAD SECTION ---------->
 <body th:with="del=${#request.getParameter('delete')}">
     <div>
-        <h3 th:if="${del}" class="alert">Usuń kategorię</h3>
-        <h3 th:unless="${del}" class="primary">Zapisz kategorię</h3>
         <form method="post" th:action="@{/category}" th:object="${category}" class="mif-light">
+            <div class="form-group">
+                <h3 th:if="${del}" class="alert">Usuń kategorię</h3>
+                <h3 th:unless="${del}" class="primary">Zapisz kategorię</h3>
+            </div>
             <div class="form-group">
                 <label>Nazwa:</label>
                 <input th:field="*{categoryName}" type="text" data-prepend="<span class='mif-tag'></span>" data-role="input" placeholder="podaj nazwę">
             </div>
             <div class="form-group">
                 <label>Ikona:</label>
-                <select th:field="*{categoryIcon}" data-role="select"></select>
+                <select id="cat-ico" th:field="*{categoryIcon}" data-role="select">
+                    <option th:each="i : ${icons}" th:value="${i}" th:text="${i}"></option>
+                </select>
             </div>
             <div class="form-group">
                 <label>Akcent:</label>
