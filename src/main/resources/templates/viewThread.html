@@ -36,9 +36,19 @@
                     <span class="mif-bin"></span>
                     <span>Usuń</span>
                 </button>
+                <th:block th:if="${uid != null}">
+                    <button th:if="${followStatus}" id="btn-follow" class="button success outline small border-radius-4">
+                        <span class="mif-bookmark"></span>
+                        <span>Usuń z zakładek</span>
+                    </button>
+                    <button th:unless="${followStatus}"  id="btn-follow"  class="button success small border-radius-4">
+                        <span class="mif-bookmark"></span>
+                        <span>Zapisz w zakładkach</span>
+                    </button>
+                </th:block>
 
                 <!-- POST QUOTE -->
-                <address>
+                <address th:id="${'post' + post.getPostId()}">
                     <strong th:text="${post.getPostTitle()}"></strong><br>
                     <span th:text="${post.getPostContent()}"></span><br>
                     <small th:text="${post.getPostAuthor().getUserName()}"></small>
@@ -53,6 +63,14 @@
 <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
 <!-- My scripts -->
 <script th:src="@{/js/panels.js}"></script>
+
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    var postId = /*[[${post.getPostId}]]*/ -1;
+    var userId = /*[[${uid}]]*/ -1;
+    var followState = /*[[${followStatus}]]*/ false;
+    /*]]>*/
+</script>
 
 <script>
     function notifyError(text) {
@@ -129,6 +147,37 @@
 
         window.open(url , "Kategoria" , "width=500, height=600")
     }
+
+    let followBtn = $("#btn-follow");
+
+    $(followBtn).click(() => {
+        if (!followState) {
+            $.ajax({
+                method: "POST" ,
+                async: true ,
+                url: `/api/user/follow/${postId}` ,
+                timeout: 1000 ,
+                contentType: 'application/json; charset=utf-8'
+            }).then(function (result) {
+                notifyError(result);
+            } , function (xhr) {
+                notifyError("Błąd żądania!");
+            });
+        } else {
+            $.ajax({
+                method: "POST" ,
+                async: true ,
+                url: `/api/user/unfollow/${postId}` ,
+                timeout: 1000 ,
+                contentType: 'application/json; charset=utf-8'
+            }).then(function (result) {
+                notifyError(result);
+            } , function (xhr) {
+                notifyError("Błąd żądania!");
+            });
+        }
+    })
+
 </script>
 
 </body>

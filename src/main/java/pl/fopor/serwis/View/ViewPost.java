@@ -2,6 +2,7 @@ package pl.fopor.serwis.View;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -123,16 +124,22 @@ public class ViewPost {
 
     @GetMapping(path = "/thread")
     public String getThreadPage(@RequestParam Integer id , Model model) {
-        Post post;
-
-        if (id == null) {
-            post = new Post();
-        } else {
-            post = postService.getId(id).get();
+        UserDetails principal;
+        try {
+            principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception err) {
+            principal = null;
         }
 
-        var num = commentService.getCommentForPost(post).size();
+        User user = principal == null ? null :userService.getByName(principal.getUsername());
+        Post post = postService.getId(id).get();
 
+        var num = commentService.getCommentForPost(post).size();
+        var followers = post.getPostFollowedBy();
+        var followStatus = user != null && !followers.isEmpty() && followers.contains(user);
+
+        model.addAttribute("uid" , user == null ? null : user.getUserId());
+        model.addAttribute("followStatus" , followStatus);
         model.addAttribute("post" , post);
         model.addAttribute("commentsNum" , num);
 
