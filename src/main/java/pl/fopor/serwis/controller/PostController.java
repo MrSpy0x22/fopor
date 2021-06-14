@@ -59,4 +59,5 @@ public class PostController implements ControllerTpl<Post> {
     public Page<Post> findByPostSolvedFalse(Pageable pageable) {
         return postService.findByPostSolvedFalse(pageable);
     }
+
 }
