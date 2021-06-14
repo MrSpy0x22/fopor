@@ -42,13 +42,7 @@ public class ViewPost {
         this.userService = userService;
     }
 
-    @GetMapping("/posts")
-    public String getPage(Model model ) {
-        List<Post> users = postService.getAll();
 
-        //model.addAttribute("catList" , users);
-        return "error";
-    }
 
     @GetMapping(path = "/post")
     public String getForm(@RequestParam(name = "id" , required = false) Integer id , Model model) {
@@ -119,34 +113,6 @@ public class ViewPost {
         }
     }
 
-//    @PostMapping(path = "/reply")
-//    public String postReply(@ModelAttribute @Valid Comment comment , BindingResult bindResult) {
-//        if (bindResult.hasErrors()) {
-//            return "writePost";
-//        } else {
-//            try {
-//                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//                String uname = ((UserDetails) principal).getUsername();
-//                User user = userService.getByName(uname);
-//
-//                if (user == null) {
-//                    return "redirect:/error";
-//                } else {
-//                    post.setPostAuthor(user);
-//                    post.setPostSolved(false);
-//                    post.setPostState(ContentState.CS_NORMAL);
-//                    postService.save(post);
-//                }
-//            } catch (HttpStatusCodeException e) {
-//                bindResult.rejectValue(null , String.valueOf(e.getStatusCode().value()) , e.getStatusCode().getReasonPhrase());
-//                return "writePost";
-//            }
-//
-//            // Redirect to post
-//            return "redirect:/thread?id=" + post.getPostId().toString();
-//        }
-//    }
-
     @GetMapping(path = "/thread")
     public String getThreadPage(@RequestParam Integer id , Model model) {
         UserDetails principal;
@@ -169,5 +135,11 @@ public class ViewPost {
         model.addAttribute("commentsNum" , num);
 
         return "viewThread";
+    }
+
+    @GetMapping("/posts")
+    public String getPosts(Model model) {
+
+        return "viewPosts";
     }
 }

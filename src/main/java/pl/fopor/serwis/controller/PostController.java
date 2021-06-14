@@ -36,7 +36,7 @@ public class PostController implements ControllerTpl<Post> {
         return postService.getId(id).orElse(null);
     }
 
-    @GetMapping
+    @GetMapping("/")
     @Override
     public Page<Post> getPageOf(Pageable pageable) {
         return postService.getPage(pageable);
