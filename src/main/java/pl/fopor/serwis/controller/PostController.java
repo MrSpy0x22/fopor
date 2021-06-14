@@ -3,12 +3,17 @@ package pl.fopor.serwis.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import pl.fopor.serwis.model.Post;
+import pl.fopor.serwis.model.User;
 import pl.fopor.serwis.service.PostService;
+import pl.fopor.serwis.service.UserService;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -17,10 +22,12 @@ import java.util.Optional;
 public class PostController implements ControllerTpl<Post> {
 
     private final PostService postService;
+    private final UserService userService;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, UserService userService) {
         this.postService = postService;
+        this.userService = userService;
     }
 
     @GetMapping("/{id}")

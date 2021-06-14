@@ -36,7 +36,7 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/**").permitAll()
                 .antMatchers("/css/**" , "/js/**" , "/remind" , "/register" , "/login*" , "/logout")
                 .permitAll()
-                .antMatchers("/index" , "/" , "/categories" , "/thread**").permitAll()
+                .antMatchers("/index" , "/" , "/categories" , "/thread**" , "/posts**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()

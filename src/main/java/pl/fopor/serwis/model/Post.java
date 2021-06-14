@@ -1,20 +1,22 @@
 package pl.fopor.serwis.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class Post {
 
     @Id
@@ -29,6 +31,9 @@ public class Post {
 
     @CreationTimestamp
     LocalDateTime postCreationTime;
+
+    @CreationTimestamp
+    LocalDateTime postLstEditTime;
 
     @Enumerated(EnumType.ORDINAL)
     ContentState postState;
@@ -47,5 +52,9 @@ public class Post {
     @OneToMany(cascade = CascadeType.ALL , fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_post_comments")
     List<Comment> postComments;
+
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.ALL , mappedBy = "userFollowedPosts")
+    Set<User> postFollowedBy = new HashSet<>();
 
 }

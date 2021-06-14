@@ -24,7 +24,7 @@
     <div id="page" class="content-element">
         <div class="ce-container">
             <div class="c-panel">
-                <button class="button primary small border-radius-4">
+                <button id="btn-reply" class="button primary small border-radius-4">
                     <span class="mif-reply"></span>
                     <span>Odpowiedz</span>
                 </button>
@@ -36,9 +36,19 @@
                     <span class="mif-bin"></span>
                     <span>Usuń</span>
                 </button>
+                <th:block th:if="${uid != null}">
+                    <button th:if="${followStatus}" id="btn-follow" class="button success outline small border-radius-4">
+                        <span class="mif-bookmark"></span>
+                        <span>Usuń z zakładek</span>
+                    </button>
+                    <button th:unless="${followStatus}"  id="btn-follow"  class="button success small border-radius-4">
+                        <span class="mif-bookmark"></span>
+                        <span>Zapisz w zakładkach</span>
+                    </button>
+                </th:block>
 
                 <!-- POST QUOTE -->
-                <address>
+                <address th:id="${'post' + post.getPostId()}">
                     <strong th:text="${post.getPostTitle()}"></strong><br>
                     <span th:text="${post.getPostContent()}"></span><br>
                     <small th:text="${post.getPostAuthor().getUserName()}"></small>
@@ -53,6 +63,14 @@
 <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
 <!-- My scripts -->
 <script th:src="@{/js/panels.js}"></script>
+
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    var postId = /*[[${post.getPostId}]]*/ -1;
+    var userId = /*[[${uid}]]*/ -1;
+    var followState = /*[[${followStatus}]]*/ false;
+    /*]]>*/
+</script>
 
 <script>
     function notifyError(text) {
@@ -71,64 +89,38 @@
     $("#btn_size10").click(function () { pageSize = 10; } );
     $("#btn_size25").click(function () { pageSize = 25; } );
     $("#btn_size50").click(function () { pageSize = 50; } );
-    $(document).ready(() => { getCategories() });
-    $("#cat-load").click(() => getCategories());
-    $("#cat-add").click(() => categoryPopup());
 
-    function getCategories() {
-        $.ajax({
-            type: "GET" ,
-            async: true ,
-            url: "/api/category/" ,
-            timeout: 1000 ,
-            //url: `/api/category?page=${pageNumber}&size=${pageSize}&order=${pageOrder === "desc" ? "desc" : "asc"}&sort=${pageSort}` ,
-            contentType: 'application/json; charset=utf-8'
-        }).then(function (result) {
-            $("#trows").clear();
+    let replyBtn = $("#btn-follow");
+    let followBtn = $("#btn-follow");
 
-            if (typeof result === "string") {
-                let objects = JSON.parse(result).content;
-                console.log(objects);
-                if (objects === undefined) {
-                    notifyError("Błąd przetwarzania obiektu.");
-                } else {
-                    objects.forEach((o) => {
-                        let row = $("<tr>" , {id: "cat" + o.categoryId});
-                        let buttons = $("<td>");
-
-                        $(buttons).append(
-                            ($("<button>" , { class: "button outline secondary small" , style: "margin-right: 3px" })
-                                .click(() => categoryPopup(o.categoryId , false)))
-                                .append($("<span>" , { class: "mif-pencil" })));
-                        $(buttons).append(
-                            ($("<button>" , { class: "button outline alert small" , style: "margin-right: 3px" })
-                                .click(() => categoryPopup(o.categoryId , false)))
-                                .append($("<span>" , { class: "mif-bin" })));
-
-                        $(row).append(buttons);
-                        $(row).append($("<td>").append($("<span>" , {class: "mif-" + o.categoryIcon})));
-                        $(row).append($("<td>").html(o.categoryName));
-                        $(row).append($("<td>").html(o.categoryCreationCreator));
-                        $(row).append($("<td>").html(o.categoryCreationTime));
-                        $("#trows").append(row);
-                    });
-                }
-            } else {
-                notifyError("Serwer zwrócił dane, które nie mogą zostać przetworzone.");
-            }
-        } , function (xhr) {
-            notifyError("Błąd żądania!");
-        });
-    }
-    function categoryPopup(id , del) {
-        let url = typeof id == "number" && id >= 0 ? `/category?id=${id}` : "/category";
-
-        if (del != null && del) {
-            url += "&delete=true";
+    $(followBtn).click(() => {
+        if (!followState) {
+            $.ajax({
+                method: "POST" ,
+                async: true ,
+                url: `/api/user/follow/${postId}` ,
+                timeout: 1000 ,
+                contentType: 'application/json; charset=utf-8'
+            }).then(function (result) {
+                notifyError(result);
+            } , function (xhr) {
+                notifyError("Błąd żądania!");
+            });
+        } else {
+            $.ajax({
+                method: "POST" ,
+                async: true ,
+                url: `/api/user/unfollow/${postId}` ,
+                timeout: 1000 ,
+                contentType: 'application/json; charset=utf-8'
+            }).then(function (result) {
+                notifyError(result);
+            } , function (xhr) {
+                notifyError("Błąd żądania!");
+            });
         }
+    })
 
-        window.open(url , "Kategoria" , "width=500, height=600")
-    }
 </script>
 
 </body>

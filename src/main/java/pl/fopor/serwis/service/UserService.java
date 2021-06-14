@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pl.fopor.serwis.model.Post;
 import pl.fopor.serwis.model.User;
+import pl.fopor.serwis.repository.PostRepository;
 import pl.fopor.serwis.repository.UserRepository;
 
 import javax.transaction.Transactional;
@@ -14,10 +16,12 @@ import java.util.Optional;
 @Service
 public class UserService implements ServiceTpl<User> {
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PostRepository postRepository) {
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
     }
 
     @Override
@@ -57,4 +61,9 @@ public class UserService implements ServiceTpl<User> {
     public User getByName(String name) {
         return userRepository.findByUserMail(name);
     }
+
+    public List<User> getByFollowedPost(Post post) {
+        return userRepository.findUserByUserFollowedPosts(post);
+    }
+
 }

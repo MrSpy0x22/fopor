@@ -2,6 +2,7 @@ package pl.fopor.serwis.View;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -12,10 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpStatusCodeException;
-import pl.fopor.serwis.model.Category;
-import pl.fopor.serwis.model.ContentState;
-import pl.fopor.serwis.model.Post;
-import pl.fopor.serwis.model.User;
+import pl.fopor.serwis.model.*;
 import pl.fopor.serwis.service.CategoryService;
 import pl.fopor.serwis.service.CommentService;
 import pl.fopor.serwis.service.PostService;
@@ -121,18 +119,52 @@ public class ViewPost {
         }
     }
 
+//    @PostMapping(path = "/reply")
+//    public String postReply(@ModelAttribute @Valid Comment comment , BindingResult bindResult) {
+//        if (bindResult.hasErrors()) {
+//            return "writePost";
+//        } else {
+//            try {
+//                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//                String uname = ((UserDetails) principal).getUsername();
+//                User user = userService.getByName(uname);
+//
+//                if (user == null) {
+//                    return "redirect:/error";
+//                } else {
+//                    post.setPostAuthor(user);
+//                    post.setPostSolved(false);
+//                    post.setPostState(ContentState.CS_NORMAL);
+//                    postService.save(post);
+//                }
+//            } catch (HttpStatusCodeException e) {
+//                bindResult.rejectValue(null , String.valueOf(e.getStatusCode().value()) , e.getStatusCode().getReasonPhrase());
+//                return "writePost";
+//            }
+//
+//            // Redirect to post
+//            return "redirect:/thread?id=" + post.getPostId().toString();
+//        }
+//    }
+
     @GetMapping(path = "/thread")
     public String getThreadPage(@RequestParam Integer id , Model model) {
-        Post post;
-
-        if (id == null) {
-            post = new Post();
-        } else {
-            post = postService.getId(id).get();
+        UserDetails principal;
+        try {
+            principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception err) {
+            principal = null;
         }
 
-        var num = commentService.getCommentForPost(post).size();
+        User user = principal == null ? null :userService.getByName(principal.getUsername());
+        Post post = postService.getId(id).get();
 
+        var num = commentService.getCommentForPost(post).size();
+        var followers = post.getPostFollowedBy();
+        var followStatus = user != null && !followers.isEmpty() && followers.contains(user);
+
+        model.addAttribute("uid" , user == null ? null : user.getUserId());
+        model.addAttribute("followStatus" , followStatus);
         model.addAttribute("post" , post);
         model.addAttribute("commentsNum" , num);
 

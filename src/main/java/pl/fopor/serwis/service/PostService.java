@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.fopor.serwis.model.Post;
+import pl.fopor.serwis.model.User;
 import pl.fopor.serwis.repository.PostRepository;
 
 import javax.transaction.Transactional;
@@ -56,5 +57,16 @@ public class PostService implements ServiceTpl<Post> {
 
     public Page<Post> findByPostSolvedFalse(Pageable pageable) {
         return postRepository.findByPostSolvedFalse(pageable);
+    }
+
+    public List<Post> getByFollower(User user) {
+        return postRepository.findPostByPostFollowedBy(user);
+    }
+
+    public boolean isFollowedBy(User user , Post post) {
+        return postRepository
+                .findPostByPostFollowedBy(user)
+                .stream()
+                .anyMatch(p -> post.getPostId().equals(p.getPostId()));
     }
 }
