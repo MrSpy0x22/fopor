@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpStatusCodeException;
-import pl.fopor.serwis.model.Category;
-import pl.fopor.serwis.model.ContentState;
-import pl.fopor.serwis.model.Post;
-import pl.fopor.serwis.model.User;
+import pl.fopor.serwis.model.*;
 import pl.fopor.serwis.service.CategoryService;
 import pl.fopor.serwis.service.CommentService;
 import pl.fopor.serwis.service.PostService;
@@ -121,6 +118,34 @@ public class ViewPost {
             return "redirect:/thread?id=" + post.getPostId().toString();
         }
     }
+
+//    @PostMapping(path = "/reply")
+//    public String postReply(@ModelAttribute @Valid Comment comment , BindingResult bindResult) {
+//        if (bindResult.hasErrors()) {
+//            return "writePost";
+//        } else {
+//            try {
+//                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//                String uname = ((UserDetails) principal).getUsername();
+//                User user = userService.getByName(uname);
+//
+//                if (user == null) {
+//                    return "redirect:/error";
+//                } else {
+//                    post.setPostAuthor(user);
+//                    post.setPostSolved(false);
+//                    post.setPostState(ContentState.CS_NORMAL);
+//                    postService.save(post);
+//                }
+//            } catch (HttpStatusCodeException e) {
+//                bindResult.rejectValue(null , String.valueOf(e.getStatusCode().value()) , e.getStatusCode().getReasonPhrase());
+//                return "writePost";
+//            }
+//
+//            // Redirect to post
+//            return "redirect:/thread?id=" + post.getPostId().toString();
+//        }
+//    }
 
     @GetMapping(path = "/thread")
     public String getThreadPage(@RequestParam Integer id , Model model) {

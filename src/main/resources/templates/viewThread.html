@@ -24,7 +24,7 @@
     <div id="page" class="content-element">
         <div class="ce-container">
             <div class="c-panel">
-                <button class="button primary small border-radius-4">
+                <button id="btn-reply" class="button primary small border-radius-4">
                     <span class="mif-reply"></span>
                     <span>Odpowiedz</span>
                 </button>
@@ -89,65 +89,8 @@
     $("#btn_size10").click(function () { pageSize = 10; } );
     $("#btn_size25").click(function () { pageSize = 25; } );
     $("#btn_size50").click(function () { pageSize = 50; } );
-    $(document).ready(() => { getCategories() });
-    $("#cat-load").click(() => getCategories());
-    $("#cat-add").click(() => categoryPopup());
 
-    function getCategories() {
-        $.ajax({
-            type: "GET" ,
-            async: true ,
-            url: "/api/category/" ,
-            timeout: 1000 ,
-            //url: `/api/category?page=${pageNumber}&size=${pageSize}&order=${pageOrder === "desc" ? "desc" : "asc"}&sort=${pageSort}` ,
-            contentType: 'application/json; charset=utf-8'
-        }).then(function (result) {
-            $("#trows").clear();
-
-            if (typeof result === "string") {
-                let objects = JSON.parse(result).content;
-                console.log(objects);
-                if (objects === undefined) {
-                    notifyError("Błąd przetwarzania obiektu.");
-                } else {
-                    objects.forEach((o) => {
-                        let row = $("<tr>" , {id: "cat" + o.categoryId});
-                        let buttons = $("<td>");
-
-                        $(buttons).append(
-                            ($("<button>" , { class: "button outline secondary small" , style: "margin-right: 3px" })
-                                .click(() => categoryPopup(o.categoryId , false)))
-                                .append($("<span>" , { class: "mif-pencil" })));
-                        $(buttons).append(
-                            ($("<button>" , { class: "button outline alert small" , style: "margin-right: 3px" })
-                                .click(() => categoryPopup(o.categoryId , false)))
-                                .append($("<span>" , { class: "mif-bin" })));
-
-                        $(row).append(buttons);
-                        $(row).append($("<td>").append($("<span>" , {class: "mif-" + o.categoryIcon})));
-                        $(row).append($("<td>").html(o.categoryName));
-                        $(row).append($("<td>").html(o.categoryCreationCreator));
-                        $(row).append($("<td>").html(o.categoryCreationTime));
-                        $("#trows").append(row);
-                    });
-                }
-            } else {
-                notifyError("Serwer zwrócił dane, które nie mogą zostać przetworzone.");
-            }
-        } , function (xhr) {
-            notifyError("Błąd żądania!");
-        });
-    }
-    function categoryPopup(id , del) {
-        let url = typeof id == "number" && id >= 0 ? `/category?id=${id}` : "/category";
-
-        if (del != null && del) {
-            url += "&delete=true";
-        }
-
-        window.open(url , "Kategoria" , "width=500, height=600")
-    }
-
+    let replyBtn = $("#btn-follow");
     let followBtn = $("#btn-follow");
 
     $(followBtn).click(() => {

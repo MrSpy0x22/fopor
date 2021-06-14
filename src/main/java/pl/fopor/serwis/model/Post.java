@@ -32,6 +32,9 @@ public class Post {
     @CreationTimestamp
     LocalDateTime postCreationTime;
 
+    @CreationTimestamp
+    LocalDateTime postLstEditTime;
+
     @Enumerated(EnumType.ORDINAL)
     ContentState postState;
 
