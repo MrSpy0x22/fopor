@@ -52,6 +52,7 @@ public class ViewCategories {
         }
 
         model.addAttribute("icons" , FoPorDataUtils.iconNames);
+        model.addAttribute("colors" , FoPorDataUtils.colorsMap);
         model.addAttribute("category" , category);
         return "popups/p_catForm";
     }

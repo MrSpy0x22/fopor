@@ -28,10 +28,15 @@ public class CategoryController implements ControllerTpl<Category> {
         return categoryService.getId(id).orElse(null);
     }
 
-    @GetMapping("")
+    @GetMapping("/all")
     @Override
     public Page<Category> getPageOf(Pageable pageable) {
-        return categoryService.getPage(pageable);
+        return categoryService.getPageWithEmptyCheck(true , pageable);
+    }
+
+    @GetMapping("/nonempty")
+    public Page<Category> getPageOfNonEmpty(Pageable pageable) {
+        return categoryService.getPageWithEmptyCheck(false , pageable);
     }
 
     @PostMapping

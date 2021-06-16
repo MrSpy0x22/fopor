@@ -2,23 +2,22 @@
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <!---------- HEAD SECTION ---------->
 <head>
-    <!-- STYLES -->
+    <!-- META -->
     <meta charset="UTF-8">
     <!-- STYLES -->
     <link type="text/css" rel="stylesheet" th:href="@{/css/popup_dialog.css}">
     <!-- METRO4 CSS -->
-    <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
+    <link type="text/css" th:rel="stylesheet" th:href="@{/css/metro4/metro-4.4.3.css}">
     <!-- TITLE -->
     <title>Kategoria</title>
 </head>
 <!---------- HEAD SECTION ---------->
-<body th:with="del=${#request.getParameter('delete')}">
+<body th:with="del=${#request.getParameter('delete')}" class="bg-light">
     <div>
-        <form method="post" th:action="@{/category}" th:object="${category}" class="mif-light">
-            <div class="form-group">
-                <h3 th:if="${del}" class="alert">Usuń kategorię</h3>
-                <h3 th:unless="${del}" class="primary">Zapisz kategorię</h3>
-            </div>
+        <h3 th:if="${del}" class="popup-header bg-red">Usuń kategorię</h3>
+        <h3 th:unless="${del}" class="popup-header bg-cobalt">Zapisz kategorię</h3>
+
+        <form method="post" th:action="@{/category}" th:object="${category}">
             <div class="form-group">
                 <label>Nazwa:</label>
                 <input th:field="*{categoryName}" type="text" data-prepend="<span class='mif-tag'></span>" data-role="input" placeholder="podaj nazwę">
@@ -26,19 +25,24 @@
             <div class="form-group">
                 <label>Ikona:</label>
                 <select id="cat-ico" th:field="*{categoryIcon}" data-role="select">
-                    <option th:each="i : ${icons}" th:value="${i}" th:text="${i}"></option>
+                    <option th:each="i : ${icons}" th:value="${i}" th:text="${i}"
+                            th:attr="data-template=${'<span class=&quot;icon mif-' + i +  '&quot;></span> $1'}"></option>
                 </select>
             </div>
             <div class="form-group">
-                <label>Akcent:</label>
-                <input th:field="*{categoryAccent}" type="color" data-prepend="<span class='mif-paint'></span>" data-role="input" placeholder="podaj nazwę">
+                <label>Kolor:</label>
+                <select th:field="*{categoryAccent}" data-role="select">
+                    <option th:each="c : ${colors}" th:value="${c.getKey()}" th:text="${c.getValue()}"
+                            th:class="${c.getKey() != null ? 'fg-' + c.getKey() : ''}">
+                    </option>
+                </select>
             </div>
             <div class="form-group">
                 <button th:if="${del != null && del}" type="submit" class="button alert" name="delete">
                     <span class='mif-bin'></span>
                     <span>Usuń</span>
                 </button>
-                <button th:unless="${del}" type="submit" class="button alert">
+                <button th:unless="${del}" type="submit" class="button primary">
                     <span class='mif-floppy-disk'></span>
                     <span>Zapisz</span>
                 </button>

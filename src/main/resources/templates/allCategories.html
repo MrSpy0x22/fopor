@@ -29,55 +29,50 @@
                         <div class="frame">
                             <div class="heading" style="background: transparent;">Filtrowanie</div>
                             <div class="content">
-                                <div data-role="bottongroup">
-                                    <button id="btn_size10" class="button">10</button>
-                                    <button id="btn_size25" class="button active">25</button>
-                                    <button id="btn_size50" class="button">50</button>
+                                <div class="row">
+                                    <div data-role="bottongroup">
+                                        <button id="btn_size10" class="button">10</button>
+                                        <button id="btn_size25" class="button active">25</button>
+                                        <button id="btn_size50" class="button">50</button>
+                                    </div>
+                                    <select data-role="select">
+                                        <option>Data</option>
+                                        <option>Nazwa</option>
+                                        <option>Użytkownik</option>
+                                    </select>
+                                    <button class="button">
+                                        <span class="mif-sort-asc"></span>
+                                    </button>
+                                    <button class="button">
+                                        <span class="mif-sort-desc"></span>
+                                    </button>
+                                    <button id="cat-load" class="button primary">Filtruj</button>
                                 </div>
-                                <select data-role="select">
-                                    <option>Data</option>
-                                    <option>Nazwa</option>
-                                    <option>Użytkownik</option>
-                                </select>
-                                <button class="button">
-                                    <span class="mif-sort-asc"></span>
-                                </button>
-                                <button class="button">
-                                    <span class="mif-sort-desc"></span>
-                                </button>
-                                <button id="cat-load" class="button primary">Filtruj</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="c-panel">
-                    <table id="table" class="table stripped row-hover">
-                        <thead>
-                        <tr>
-                            <th> </th>
-                            <th> </th>
-                            <th>Nazwa</th>
-                            <th>Twórca</th>
-                            <th>Data utworzenia</th>
-                        </tr>
-                        </thead>
-                        <tbody id="trows"></tbody>
-                    </table>
+                    <div class="mb-4">
+                        <button id="action_button_add" class="button primary border-radius-4"><span class="mif-add"></span><span>Nowa</span></button>
+                        <button id="action_button_info" class="float-right button border-radius-4"><span class="mif-info"></span></button>
+                        <input id="non_empty_check" class="float-right" type="checkbox" data-role="switch" data-caption="Pokaż puste" data-caption-position="left" checked>
+                        <input id="grid_view_check" class="float-right" type="checkbox" data-role="switch" data-caption="Lista" data-caption-position="left">
+                    </div>
+                    <div id="data-view-container"> </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <button id="cat-add" class="action-button primary" style="position:fixed;margin:20px;bottom:0;right:0;">
-        <span class="icon"><span class="mif-plus"></span></span>
-    </button>
-
     <!-- METRO4 -->
     <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
     <!-- My scripts -->
-    <script th:src="@{/js/panels.js}"></script>
+    <script th:src="@{/js/ui_utils.js}"></script>
 
     <script>
+        let categoryData = null;
+
         function notifyError(text) {
             let notify = Metro.notify;
             console.error(text);
@@ -96,18 +91,38 @@
         $("#btn_size50").click(function () { pageSize = 50; } );
         $(document).ready(() => { getCategories() });
         $("#cat-load").click(() => getCategories());
-        $("#cat-add").click(() => categoryPopup());
+        let nonEmptyCheck = $("#non_empty_check");
+        $(nonEmptyCheck).on("click" , () => {
+            getCategories();
+        });
+
+        let gridViewCheck = $("#grid_view_check");
+        $(gridViewCheck).on("click" , () => {
+            showData()
+        } );
+
+        let selectedCategory = -1;
+
+        $("#action_button_add").click(() => categoryPopup(selectedCategory));
+
+        $("#action_button_info").click(() => {
+            if (selectedCategory === -1) {
+                modalUpdate("Wybierz kategorię prawym przyciskiem myszy i ponów akcję, aby zobaczyć szczegóły." ,
+                    "Nie wybrano kategorii");
+            }
+        })
 
         function getCategories() {
+            let ignore_empty = $(nonEmptyCheck).is(":checked");
+
             $.ajax({
                 type: "GET" ,
                 async: true ,
-                url: "/api/category/" ,
+                url: `/api/category/${ignore_empty ? "all" : "nonempty"}` ,
                 timeout: 1000 ,
                 //url: `/api/category?page=${pageNumber}&size=${pageSize}&order=${pageOrder === "desc" ? "desc" : "asc"}&sort=${pageSort}` ,
                 contentType: 'application/json; charset=utf-8'
             }).then(function (result) {
-                $("#trows").clear();
 
                 if (typeof result === "string") {
                     let objects = JSON.parse(result).content;
@@ -115,26 +130,8 @@
                     if (objects === undefined) {
                         notifyError("Błąd przetwarzania obiektu.");
                     } else {
-                        objects.forEach((o) => {
-                            let row = $("<tr>" , {id: "cat" + o.categoryId});
-                            let buttons = $("<td>");
-
-                            $(buttons).append(
-                                ($("<button>" , { class: "button outline secondary small" , style: "margin-right: 3px" })
-                                    .click(() => categoryPopup(o.categoryId , false)))
-                                        .append($("<span>" , { class: "mif-pencil" })));
-                            $(buttons).append(
-                                ($("<button>" , { class: "button outline alert small" , style: "margin-right: 3px" })
-                                    .click(() => categoryPopup(o.categoryId , false)))
-                                    .append($("<span>" , { class: "mif-bin" })));
-
-                            $(row).append(buttons);
-                            $(row).append($("<td>").append($("<span>" , {class: "mif-" + o.categoryIcon})));
-                            $(row).append($("<td>").html(o.categoryName));
-                            $(row).append($("<td>").html(o.categoryCreationCreator));
-                            $(row).append($("<td>").html(o.categoryCreationTime));
-                            $("#trows").append(row);
-                        });
+                        categoryData = objects;
+                        showData();
                     }
                 } else {
                     notifyError("Serwer zwrócił dane, które nie mogą zostać przetworzone.");
@@ -143,6 +140,60 @@
                 notifyError("Błąd żądania!");
             });
         }
+
+        function showData() {
+            let container = $("#data-view-container").clear();
+            let isList = $(gridViewCheck).is(":checked");
+
+
+            if (!isList) { /* Grid view */
+                let categories = $("<div>" , { id: "categories" , class: "tiles-grid" });
+                $(categories).appendTo(container);
+
+                categoryData.forEach((d) => {
+                    let tile = $("<a>" , { href: `/category?id=${d.categoryId}` , class: `bg-${d.categoryAccent}` })
+                        .attr("data-role" , "tile")
+                        .attr("data-id" , `${d.categoryId}`)
+                        .on("contextmenu" , () => {
+
+                        });
+                    let tileIcon = $("<span>" , { class: `mif-${d.categoryIcon} icon` });
+                    let tileCaption = $("<span>" , { class: "branding-bar" }).text(d.categoryName);
+
+                    $(tile).append(tileIcon);
+                    $(tile).append(tileCaption);
+                    $(categories).append(tile);
+                });
+            } else { /* Table view */
+                let categories = $("<table>" , { id: "categories" , class:"table stripped row-hover" });
+                $(categories).html("<thead><th style='width:100px'> </th> <th style='width:50px'> </th> <th>Nazwa</th> <th>Twórca</th> <th style='width:250px'>Data utworzenia</th></thead>");
+                $(categories).appendTo(container);
+                let tableBody = $("<tbody>").appendTo(categories);
+
+                categoryData.forEach((d) => {
+                let row = $("<tr>" , {id: "cat" + d.categoryId});
+                let buttons = $("<td>");
+
+                $(buttons).append(
+                    ($("<button>" , { class: "button outline secondary small" , style: "margin-right: 3px" })
+                        .click(() => categoryPopup(d.categoryId , false)))
+                        .append($("<span>" , { class: "mif-pencil" })));
+                $(buttons).append(
+                    ($("<button>" , { class: "button outline alert small" , style: "margin-right: 3px" })
+                        .click(() => categoryPopup(d.categoryId , true)))
+                        .append($("<span>" , { class: "mif-bin" })));
+
+                $(row).append(buttons);
+                $(row).append($("<td>").append($("<span>" , {class: "mif-" + d.categoryIcon})));
+                $(row).append($("<td>").html(d.categoryName));
+                $(row).append($("<td>").html(d.categoryCreationCreator));
+                $(row).append($("<td>").html(d.categoryCreationTime));
+                $(tableBody).append(row);
+            });
+            }
+        }
+
+
         function categoryPopup(id , del) {
             let url = typeof id == "number" && id >= 0 ? `/category?id=${id}` : "/category";
 

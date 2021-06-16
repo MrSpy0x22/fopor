@@ -27,7 +27,7 @@ public class Category {
     String categoryName;
 
     @NotNull(message = "To pole jest wymagane")
-    long categoryAccent;
+    String categoryAccent;
 
     @NotNull(message = "To pole jest wymagane")
     String categoryIcon;

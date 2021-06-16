@@ -28,7 +28,7 @@
                     <span class="mif-reply"></span>
                     <span>Odpowiedz</span>
                 </button>
-                <button class="button secondary small border-radius-4">
+                <button th:unless="${post.getPostSolved()}" class="button secondary small border-radius-4">
                     <span class="mif-lock"></span>
                     <span>Zamknij</span>
                 </button>
@@ -61,8 +61,8 @@
 
 <!-- METRO4 -->
 <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
-<!-- My scripts -->
-<script th:src="@{/js/panels.js}"></script>
+<!-- FoPor -->
+<script th:src="@{/js/ui_utils.js}"></script>
 
 <script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
@@ -73,25 +73,9 @@
 </script>
 
 <script>
-    function notifyError(text) {
-        let notify = Metro.notify;
-        console.error(text);
-
-        if (notify !== undefined) {
-            notify.create(text , "Błąd" , { cls: "alert" });
-        }
-    }
-
-    let pageNumber = 0;
-    let pageSize = 10;
-    let pageSort = 0;
-    let pageOrder = "asc";
-    $("#btn_size10").click(function () { pageSize = 10; } );
-    $("#btn_size25").click(function () { pageSize = 25; } );
-    $("#btn_size50").click(function () { pageSize = 50; } );
-
-    let replyBtn = $("#btn-follow");
+    let replyBtn = $("#btn-reply");
     let followBtn = $("#btn-follow");
+    let followBtnSpans = $("#btn-follow span");
 
     $(followBtn).click(() => {
         if (!followState) {
@@ -99,10 +83,11 @@
                 method: "POST" ,
                 async: true ,
                 url: `/api/user/follow/${postId}` ,
-                timeout: 1000 ,
+                timeout: 10000 ,
                 contentType: 'application/json; charset=utf-8'
             }).then(function (result) {
-                notifyError(result);
+                notifySuccess("Dodano post do zakładek.");
+                updateFollowStatus();
             } , function (xhr) {
                 notifyError("Błąd żądania!");
             });
@@ -111,15 +96,29 @@
                 method: "POST" ,
                 async: true ,
                 url: `/api/user/unfollow/${postId}` ,
-                timeout: 1000 ,
+                timeout: 10000 ,
                 contentType: 'application/json; charset=utf-8'
             }).then(function (result) {
-                notifyError(result);
+                notifySuccess("Usunięto post do zakładek.");
+                updateFollowStatus();
             } , function (xhr) {
                 notifyError("Błąd żądania!");
             });
         }
     })
+
+    function updateFollowStatus() {
+        if (followState) {
+            $(followBtn).removeClass("outline");
+            $(followBtnSpans).last().text("Dodano zakłądkę");
+        } else {
+            $(followBtn).addClass("outline");
+            $(followBtnSpans).last().text("Usunięto zakłądkęh");
+        }
+
+        // Update status
+        followState = !followState;
+    }
 
 </script>
 

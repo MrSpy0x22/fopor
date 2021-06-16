@@ -2,7 +2,7 @@
 #sidebar {
     width: var(--sb-width);
     flex-direction: column;
-    padding: 0 15px;
+    padding: 0 10px;
     overflow: hidden;
     background: var(--theme-clr-sidebar);
     border-right: 1px solid var(--theme-clr-sidebar-br);
@@ -46,6 +46,10 @@
 }
 
 @media screen and (max-width: 900px) {
+    #sidebar {
+        width: auto;
+    }
+
     .s-nav {
         width: var(--sb-width-sm);
         padding: 0;

@@ -91,6 +91,33 @@ public class ViewPost {
         return "writePost";
     }
 
+    @GetMapping(path = "/write" , params = "reply")
+    public String getWriteReplyPage(Model model , @RequestParam(name = "id" , required = false) Integer id) {
+        Post post;
+
+        if (id == null) {
+            post = new Post();
+        } else {
+            Optional<Post> opt = postService.getId(id);
+            if (opt.isEmpty()) {
+                return "redirect:/error";
+            } else {
+                post = opt.get();
+            }
+        }
+
+        // Pobieranie wszystkich kategorii
+        var categories = categoryService.getAll()
+                .stream()
+                .sorted(Comparator.comparing(Category::getCategoryName))
+                .collect(Collectors.toList());
+
+        model.addAttribute("categories" , categories);
+        model.addAttribute("post" , post);
+
+        return "writePost";
+    }
+
     @PostMapping(path = "/write")
     public String postWrite(@ModelAttribute @Valid Post post , BindingResult bindResult) {
         if (bindResult.hasErrors()) {
