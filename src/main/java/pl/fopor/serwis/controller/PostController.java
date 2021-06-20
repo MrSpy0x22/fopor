@@ -14,6 +14,7 @@ import pl.fopor.serwis.service.PostService;
 import pl.fopor.serwis.service.UserService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -67,4 +68,8 @@ public class PostController implements ControllerTpl<Post> {
         return postService.findByPostSolvedFalse(pageable);
     }
 
+    @GetMapping("/search")
+    public Page<Post> findPostsByPostTitle(@RequestParam String postTitle, Pageable pageable) {
+        return postService.findPostsByPostTitle(postTitle, pageable);
+    }
 }
