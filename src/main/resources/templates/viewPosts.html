@@ -10,7 +10,7 @@
     <!-- METRO4 -->
     <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
 
-    <title>Lista pytań nierozwiązanych</title>
+    <title>Wszystkie posty</title>
 </head>
 <body>
 <header th:replace="fragments/f_toolbar :: toolbar"></header>
@@ -51,7 +51,18 @@
                 </div>
             </div>
             <div class="c-panel">
-
+                <table id="table" class="table stripped row-hover">
+                    <thead>
+                    <tr>
+                        <th>Tytuł</th>
+                        <th>Twórca</th>
+                        <th>Data utworzenia</th>
+                        <th>Ostatnia zmiana</th>
+                        <th>Kategoria</th>
+                    </tr>
+                    </thead>
+                    <tbody id="trows"></tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -81,14 +92,14 @@
     $("#btn_size10").click(function () { pageSize = 10; } );
     $("#btn_size25").click(function () { pageSize = 25; } );
     $("#btn_size50").click(function () { pageSize = 50; } );
-    $(document).ready(() => { getUnresolvedPosts() });
-    $("#cat-load").click(() => getUnresolvedPosts());
+    $(document).ready(() => { getAllPosts() });
+    $("#cat-load").click(() => getAllPosts());
 
-    function getUnresolvedPosts() {
+    function getAllPosts() {
         $.ajax({
             type: "GET" ,
             async: true ,
-            url: "/api/post/unresolved" ,
+            url: "/api/post/" ,
             timeout: 1000 ,
             //url: `/api/category?page=${pageNumber}&size=${pageSize}&order=${pageOrder === "desc" ? "desc" : "asc"}&sort=${pageSort}` ,
             contentType: 'application/json; charset=utf-8'
@@ -106,10 +117,11 @@
                 } else {
                     objects.forEach((o) => {
                         let row = $("<tr>" , {id: "post" + o.postId});
-
-                        $(row).append($("<td>").html(o.postTitle));
+                        let link = $("<a>" , {class: "button link" , href: `/thread?id=${o.postId}`}).html(o.postTitle);
+                        $(row).append($("<td>").append(link));
                         $(row).append($("<td>").html(o.postAuthor.userName));
                         $(row).append($("<td>").html(o.postCreationTime));
+                        $(row).append($("<td>").html(o.postLstEditTime));
                         $(row).append($("<td>").html(o.postCategory.categoryName));
                         $("#trows").append(row);
                     });
