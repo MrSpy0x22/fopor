@@ -32,7 +32,7 @@ public class Comment {
     @JoinColumn(name = "fk_comment_author")
     User commentAuthor;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_comment_post")
     Post commentPost;
 

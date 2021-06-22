@@ -49,7 +49,7 @@ public class Post {
     Category postCategory;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_post_comments")
     List<Comment> postComments;
 

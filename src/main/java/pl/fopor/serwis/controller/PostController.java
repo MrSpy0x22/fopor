@@ -2,6 +2,7 @@ package pl.fopor.serwis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/post")
@@ -41,6 +43,16 @@ public class PostController implements ControllerTpl<Post> {
     @Override
     public Page<Post> getPageOf(Pageable pageable) {
         return postService.getPage(pageable);
+    }
+
+    @GetMapping("/preview")
+    public Page<Post> getPreviewPage(Pageable pageable) {
+        var page = postService.getPage(pageable);
+        page.getContent()
+                .stream()
+                .filter(p -> p.getPostContent().length() > 128)
+                .forEach(p -> p.setPostContent(p.getPostContent().substring(0 , 128)));
+        return page;
     }
 
     @PostMapping
