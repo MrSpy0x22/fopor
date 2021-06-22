@@ -18,13 +18,13 @@
                 <span class="mif-home mif-lg"></span>
                 <span class="s-item-text">Strona główna</span>
             </a></li>
-            <li><a th:href="@{/search}" th:class="${active_item == 'search' ? 's-item-active' : ''}">
-                <span class="mif-search mif-lg"></span>
-                <span class="s-item-text">Wyszukiwarka</span>
-            </a></li>
             <li><a th:href="@{/categories}" th:class="${active_item == 'categories' ? 's-item-active' : ''}">
                 <span class="mif-books mif-lg"></span>
                 <span class="s-item-text">Kategorie</span>
+            </a></li>
+            <li><a th:href="@{/search}" th:class="${active_item == 'search' ? 's-item-active' : ''}">
+                <span class="mif-search mif-lg"></span>
+                <span class="s-item-text">Wyszukiwarka</span>
             </a></li>
             <li><a th:href="@{/posts}" th:class="${active_item == 'posts' ? 's-item-active' : ''}">
                 <span class="mif-chat mif-lg"></span>
