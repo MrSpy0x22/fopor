@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/toolbar.css}">
+    <title>Pagination</title>
+</head>
+<body>
+<div th:fragment="pagination" id="pagination" class="mt-3">
+    <button class="button outline mif-first"></button>
+    <button class="button outline mif-previous"></button>
+    <button class="button outline mif-next"></button>
+    <button class="button outline mif-last"></button>
+    <input type="text" data-role="input" style="width:100px;">
+    <button class="button outline">Idź</button>
+
+    <script th:src="@{/js/pagination.js}"></script>
+</div>
+</body>
+</html>

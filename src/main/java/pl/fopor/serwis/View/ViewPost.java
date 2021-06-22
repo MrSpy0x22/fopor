@@ -42,7 +42,10 @@ public class ViewPost {
         this.userService = userService;
     }
 
-
+    @GetMapping("/posts")
+    public String getPage(Model model) {
+        return "allPosts";
+    }
 
     @GetMapping(path = "/post")
     public String getForm(@RequestParam(name = "id" , required = false) Integer id , Model model) {
@@ -60,33 +63,6 @@ public class ViewPost {
 
     @GetMapping(path = "/write")
     public String getWritePage(Model model , @RequestParam(name = "id" , required = false) Integer id) {
-        Post post;
-
-        if (id == null) {
-            post = new Post();
-        } else {
-            Optional<Post> opt = postService.getId(id);
-            if (opt.isEmpty()) {
-                return "redirect:/error";
-            } else {
-                post = opt.get();
-            }
-        }
-
-        // Pobieranie wszystkich kategorii
-        var categories = categoryService.getAll()
-                .stream()
-                .sorted(Comparator.comparing(Category::getCategoryName))
-                .collect(Collectors.toList());
-
-        model.addAttribute("categories" , categories);
-        model.addAttribute("post" , post);
-
-        return "writePost";
-    }
-
-    @GetMapping(path = "/write" , params = "reply")
-    public String getWriteReplyPage(Model model , @RequestParam(name = "id" , required = false) Integer id) {
         Post post;
 
         if (id == null) {
@@ -152,21 +128,16 @@ public class ViewPost {
         User user = principal == null ? null :userService.getByName(principal.getUsername());
         Post post = postService.getId(id).get();
 
-        var num = commentService.getCommentForPost(post).size();
+        var comments = commentService.getCommentForPost(post);
         var followers = post.getPostFollowedBy();
         var followStatus = user != null && !followers.isEmpty() && followers.contains(user);
 
         model.addAttribute("uid" , user == null ? null : user.getUserId());
         model.addAttribute("followStatus" , followStatus);
         model.addAttribute("post" , post);
-        model.addAttribute("commentsNum" , num);
+        model.addAttribute("comments" , comments);
+        model.addAttribute("commentsNum" , comments.size());
 
         return "viewThread";
-    }
-
-    @GetMapping("/posts")
-    public String getPosts(Model model) {
-
-        return "viewPosts";
     }
 }

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/toolbar.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/tableview.css}">
+
+    <!-- METRO4 -->
+    <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
+
+    <title>Napisz odpowiedźi</title>
+</head>
+<body>
+<header th:replace="fragments/f_toolbar :: toolbar"></header>
+
+<!-- PAGE WRAPPER -->
+<div id="wrapper">
+    <!-- SIDEBAR -->
+    <div th:replace="fragments/f_sidebar :: sidebar(active_item='')"></div>
+
+    <!-- CONTENT OF CURRENT VIEW -->
+    <div id="page" class="content-element">
+        <div class="ce-container">
+            <div class="c-panel">
+                <form th:action="@{/reply}" method="post" th:object="${comment}" id="postWriter">
+                    <div class="form-group">
+                        <h2>
+                            <span class="mif-comment"></span>
+                            <span th:text="${comment.getCommentPost().getPostTitle()}"></span>
+                        </h2>
+                    </div>
+                    <div class="form-group">
+                        <button class="button primary">Odpowiedz</button>
+                        <button class="button">Porzuć</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Treść komentarza</label>
+                        <small th:if="${#fields.hasErrors('commentContent')}" th:errors="*{commentContent}" class="fg-red">Błąd!</small>
+                        <textarea rows="10" th:field="*{commentContent}" form="postWriter" data-role="textarea" data-auto-size="false"
+                                  data-prepend="<span class='mif-note'></span>" data-clear-button="false"></textarea>
+                        <input type="hidden" , name="pid" th:value="${comment.getCommentPost().getPostId()}">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- METRO4 -->
+<script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
+<!-- My scripts -->
+<script th:src="@{/js/panels.js}"></script>
+
+<script>
+    function notifyError(text) {
+        let notify = Metro.notify;
+        console.error(text);
+
+        if (notify !== undefined) {
+            notify.create(text , "Błąd" , { cls: "alert" });
+        }
+    }
+
+    let pageNumber = 0;
+    let pageSize = 10;
+    let pageSort = 0;
+    let pageOrder = "asc";
+    $("#btn_size10").click(function () { pageSize = 10; } );
+    $("#btn_size25").click(function () { pageSize = 25; } );
+    $("#btn_size50").click(function () { pageSize = 50; } );
+    /*$(document).ready(() => { getCategories() });
+    $("#cat-load").click(() => getCategories());
+    $("#cat-add").click(() => categoryPopup());
+
+    function getCategories() {
+        $.ajax({
+            type: "GET" ,
+            async: true ,
+            url: "/api/category/" ,
+            timeout: 1000 ,
+            //url: `/api/category?page=${pageNumber}&size=${pageSize}&order=${pageOrder === "desc" ? "desc" : "asc"}&sort=${pageSort}` ,
+            contentType: 'application/json; charset=utf-8'
+        }).then(function (result) {
+            $("#trows").clear();
+
+            if (typeof result === "string") {
+                let objects = JSON.parse(result).content;
+                console.log(objects);
+                if (objects === undefined) {
+                    notifyError("Błąd przetwarzania obiektu.");
+                } else {
+                    objects.forEach((o) => {
+                        let row = $("<tr>" , {id: "cat" + o.categoryId});
+                        let buttons = $("<td>");
+
+                        $(buttons).append(
+                            ($("<button>" , { class: "button outline secondary small" , style: "margin-right: 3px" })
+                                .click(() => categoryPopup(o.categoryId , false)))
+                                .append($("<span>" , { class: "mif-pencil" })));
+                        $(buttons).append(
+                            ($("<button>" , { class: "button outline alert small" , style: "margin-right: 3px" })
+                                .click(() => categoryPopup(o.categoryId , false)))
+                                .append($("<span>" , { class: "mif-bin" })));
+
+                        $(row).append(buttons);
+                        $(row).append($("<td>").append($("<span>" , {class: "mif-" + o.categoryIcon})));
+                        $(row).append($("<td>").html(o.categoryName));
+                        $(row).append($("<td>").html(o.categoryCreationCreator));
+                        $(row).append($("<td>").html(o.categoryCreationTime));
+                        $("#trows").append(row);
+                    });
+                }
+            } else {
+                notifyError("Serwer zwrócił dane, które nie mogą zostać przetworzone.");
+            }
+        } , function (xhr) {
+            notifyError("Błąd żądania!");
+        });
+    }
+    function categoryPopup(id , del) {
+        let url = typeof id == "number" && id >= 0 ? `/category?id=${id}` : "/category";
+
+        if (del != null && del) {
+            url += "&delete=true";
+        }
+
+        window.open(url , "Kategoria" , "width=500, height=600")
+    }*/
+</script>
+
+</body>
+</html>

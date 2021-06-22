@@ -92,6 +92,7 @@
     $("#btn_size25").click(function () { pageSize = 25; } );
     $("#btn_size50").click(function () { pageSize = 50; } );
     $(document).ready(() => { getUnresolvedPosts() });
+    $("#cat-load").click(() => getUnresolvedPosts());
 
     function getUnresolvedPosts() {
         $.ajax({
@@ -115,8 +116,8 @@
                 } else {
                     objects.forEach((o) => {
                         let row = $("<tr>" , {id: "post" + o.postId});
-                        let link = $("<a>" , {class: "button link" , href: `/thread?id=${o.postId}`}).html(o.postTitle);
-                        $(row).append($("<td>").append(link));
+
+                        $(row).append($("<td>").html(o.postTitle));
                         $(row).append($("<td>").html(o.postAuthor.userName));
                         $(row).append($("<td>").html(o.postCreationTime));
                         $(row).append($("<td>").html(o.postCategory.categoryName));

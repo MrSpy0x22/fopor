@@ -37,7 +37,7 @@ public class PostController implements ControllerTpl<Post> {
         return postService.getId(id).orElse(null);
     }
 
-    @GetMapping("/")
+    @GetMapping
     @Override
     public Page<Post> getPageOf(Pageable pageable) {
         return postService.getPage(pageable);
@@ -68,8 +68,4 @@ public class PostController implements ControllerTpl<Post> {
         return postService.findByPostSolvedFalse(pageable);
     }
 
-    @GetMapping("/search")
-    public Page<Post> findPostsByPostTitle(@RequestParam String postTitle, Pageable pageable) {
-        return postService.findPostsByPostTitle(postTitle, pageable);
-    }
 }

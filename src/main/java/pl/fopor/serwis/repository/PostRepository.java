@@ -13,5 +13,4 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post , Integer> {
     Page<Post> findByPostSolvedFalse(Pageable pageable);
     List<Post> findPostByPostFollowedBy(User user);
-    Page<Post> findByPostTitleContaining(String title, Pageable pageable);
 }
