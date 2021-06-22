@@ -80,4 +80,8 @@ public class PostController implements ControllerTpl<Post> {
         return postService.findByPostSolvedFalse(pageable);
     }
 
+    @GetMapping("/search")
+    public Page<Post> findPostsByPostTitle(@RequestParam String postTitle, Pageable pageable) {
+        return postService.findPostsByPostTitle(postTitle, pageable);
+    }
 }

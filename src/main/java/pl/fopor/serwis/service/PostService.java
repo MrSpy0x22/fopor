@@ -69,4 +69,8 @@ public class PostService implements ServiceTpl<Post> {
                 .stream()
                 .anyMatch(p -> post.getPostId().equals(p.getPostId()));
     }
+
+    public Page<Post> findPostsByPostTitle(String title, Pageable pageable) {
+        return postRepository.findByPostTitleContaining(title, pageable);
+    }
 }

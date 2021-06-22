@@ -6,6 +6,7 @@
     <link type="text/css" rel="stylesheet" th:href="@{/css/toolbar.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/css/sidebar.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/css/tableview.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/messages.css}">
 
     <!-- METRO4 -->
     <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
@@ -24,18 +25,14 @@
     <div id="page" class="content-element">
         <div class="ce-container">
             <div class="c-panel">
-                <button id="btn-reply" class="button primary small border-radius-4">
-                    <span class="mif-reply"></span>
-                    <span>Odpowiedz</span>
-                </button>
-                <button th:unless="${post.getPostSolved()}" class="button secondary small border-radius-4">
-                    <span class="mif-lock"></span>
-                    <span>Zamknij</span>
-                </button>
-                <button class="button alert small border-radius-4">
-                    <span class="mif-bin"></span>
-                    <span>Usuń</span>
-                </button>
+                <!-- POST QUOTE -->
+                <div th:id="${'post' + post.getPostId()}" class="post-container">
+                    <h2 class="post-title" th:text="${post.getPostTitle()}"></h2>
+                    <small class="tally secondary" th:text="${post.getPostAuthor().getUserName()}"></small>
+                    <small class="tally" th:text="${post.getPostCreationTime().toString()}"></small>
+                    <p class="post-message" th:text="${post.getPostContent()}"></p>
+                </div>
+
                 <th:block th:if="${uid != null}">
                     <button th:if="${followStatus}" id="btn-follow" class="button success outline small border-radius-4">
                         <span class="mif-bookmark"></span>
@@ -46,14 +43,30 @@
                         <span>Zapisz w zakładkach</span>
                     </button>
                 </th:block>
+                <button class="button alert small border-radius-4 float-right">
+                    <span class="mif-bin"></span>
+                    <span>Usuń</span>
+                </button>
+                <button th:unless="${post.getPostSolved()}" class="button secondary small border-radius-4 float-right">
+                    <span class="mif-lock"></span>
+                    <span>Zamknij</span>
+                </button>
+                <a id="btn-reply" class="button primary small border-radius-4 float-right" th:href="@{/reply(pid=${post.getPostId()})}">
+                    <span class="mif-reply"></span>
+                    <span>Odpowiedz</span>
+                </a>
 
-                <!-- POST QUOTE -->
-                <address th:id="${'post' + post.getPostId()}">
-                    <strong th:text="${post.getPostTitle()}"></strong><br>
-                    <span th:text="${post.getPostContent()}"></span><br>
-                    <small th:text="${post.getPostAuthor().getUserName()}"></small>
-                </address>
-
+                <div th:if="${commentsNum > 0}" class="comments">
+                    <div class="comment-row" th:each="c : ${comments}">
+                        <div class="comment-author" th:text="${c.getCommentAuthor().getUserName()}"></div>
+                        <div class="comment-time" th:text="${c.getCommentCreationTime()}">16 Jun 1:22 PM</div>
+                        <div class="comment-content">
+                            <img class="comment-avatar">
+                            <div th:if="${c.getCommentAuthor().getUserId() == post.getPostAuthor().getUserId()}" class="comment-text author-reply" th:text="${c.getCommentContent()}"></div>
+                            <div th:unless="${c.getCommentAuthor().getUserId() == post.getPostAuthor().getUserId()}" class="comment-text other-reply" th:text="${c.getCommentContent()}"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
