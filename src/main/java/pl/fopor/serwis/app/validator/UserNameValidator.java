@@ -11,6 +11,6 @@ public class UserNameValidator implements ConstraintValidator<UserName , String>
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        return s != null && s.toLowerCase().matches("^[a-z0-9-_.+]$");
+        return s != null && s.toLowerCase().matches("^[a-z0-9-_.]+$");
     }
 }

@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link th:href="@{/css/auth.css}" th:rel="stylesheet">
+
     <!-- METRO4 -->
     <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
     <title>Rejestracja</title>
@@ -11,7 +13,7 @@
 <body class="bg-light"
       th:with="errored=${(param.error != null) && (param.error[0]) ? true : false}">
 
-<div class="d-flex flex-align-center flex-justify-center w-50 bg-grayWhite border border-size-1 bd-darkGray pos-absolute pos-center">
+<div id="auth-container2" class="d-flex flex-align-center flex-justify-center w-50 bg-grayWhite border border-size-1 bd-darkGray pos-absolute pos-center">
 
     <form method="post" th:action="@{/register}" class="p-3 w-100" th:object="${user}">
 
@@ -55,5 +57,7 @@
 
 <!-- METRO4 -->
 <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
+
+<script th:src="@{/js/sidebar.js}"></script>
 </body>
 </html>

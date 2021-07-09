@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpStatusCodeException;
+import pl.fopor.serwis.Utils.FoPorUtils;
 import pl.fopor.serwis.model.*;
 import pl.fopor.serwis.service.CategoryService;
 import pl.fopor.serwis.service.CommentService;
@@ -20,13 +21,10 @@ import pl.fopor.serwis.service.PostService;
 import pl.fopor.serwis.service.UserService;
 
 import javax.validation.Valid;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
-@Slf4j
 public class ViewPost {
 
     private final PostService postService;
@@ -44,6 +42,9 @@ public class ViewPost {
 
     @GetMapping("/posts")
     public String getPage(Model model) {
+
+        model.addAttribute("catList" , categoryService.getList());
+
         return "allPosts";
     }
 
@@ -76,63 +77,115 @@ public class ViewPost {
             }
         }
 
-        // Pobieranie wszystkich kategorii
-        var categories = categoryService.getAll()
-                .stream()
-                .sorted(Comparator.comparing(Category::getCategoryName))
-                .collect(Collectors.toList());
-
-        model.addAttribute("categories" , categories);
+        model.addAttribute("categories" , categoryService.getList());
         model.addAttribute("post" , post);
 
         return "writePost";
     }
 
     @PostMapping(path = "/write")
-    public String postWrite(@ModelAttribute @Valid Post post , BindingResult bindResult) {
+    public String postWrite(@ModelAttribute @Valid Post post , BindingResult bindResult , Model model) {
         if (bindResult.hasErrors()) {
+            model.addAttribute("categories" , categoryService.getList());
             return "writePost";
-        } else {
-            try {
-                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                String uname = ((UserDetails) principal).getUsername();
-                User user = userService.getByName(uname);
-
-                if (user == null) {
-                    return "redirect:/error";
-                } else {
-                    post.setPostAuthor(user);
-                    post.setPostSolved(false);
-                    post.setPostState(ContentState.CS_NORMAL);
-                    postService.save(post);
-                }
-            } catch (HttpStatusCodeException e) {
-                bindResult.rejectValue(null , String.valueOf(e.getStatusCode().value()) , e.getStatusCode().getReasonPhrase());
-                return "writePost";
-            }
-
-            // Redirect to post
-            return "redirect:/thread?id=" + post.getPostId().toString();
         }
+
+        try {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String uname = ((UserDetails) principal).getUsername();
+            User user = userService.getByName(uname);
+
+            if (user == null) {
+                return "redirect:/error";
+            } else {
+                post.setPostAuthor(user);
+                post.setPostSolved(false);
+                post.setPostState(ContentState.CS_NORMAL);
+                postService.save(post);
+            }
+        } catch (HttpStatusCodeException e) {
+            bindResult.rejectValue(null , String.valueOf(e.getStatusCode().value()) , e.getStatusCode().getReasonPhrase());
+            return "writePost";
+        }
+
+        // Redirect to post
+        return "redirect:/thread?id=" + post.getPostId().toString();
+    }
+
+    @GetMapping(path = "/tlock")
+    public String getLockThread(@RequestParam(name = "pid") Integer postId) {
+        String uname = FoPorUtils.getActiveUserName();
+
+        if (uname != null) {
+            User user = userService.getByName(uname);
+
+            if (user.getUserRole().equals(UserRole.ADMIN)) {
+                Post post = postService.getId(postId).orElse(null);
+
+                if (post != null) {
+                    Boolean state = post.getPostSolved();
+                    post.setPostSolved(!state);
+                    postService.save(post);
+
+                    return "redirect:/thread?id=" + postId;
+                }
+            }
+        }
+
+        return "redirect:/access_denied";
+    }
+
+    @GetMapping(path = "/post" , params = {"pid" , "delete"})
+    public String getDeletePost(@RequestParam(name = "pid") Integer postId , @RequestParam(name = "delete") Boolean delete) {
+        String uname = FoPorUtils.getActiveUserName();
+
+        if (uname != null && postId != null && delete != null && delete) {
+            User user = userService.getByName(uname);
+
+            if (user.getUserRole().equals(UserRole.ADMIN)) {
+                Post post = postService.getId(postId).orElse(null);
+//                List<Comment> comments = post == null ? null : post.getPostComments();
+//
+//                if (comments != null) {
+//                    for (var c : comments) {
+//                        c.removeCommentPost(post);
+//                        commentService.save(c);
+//                    }
+//
+//                    post.setPostComments(null);
+//                }
+//
+//                postService.save(post);
+
+                if (post != null) {
+                    for (var c : commentService.getForPost(post)) {
+                        commentService.deleteId(c.getCommentId());
+                    }
+                    postService.deleteId(postId);
+                    return "redirect:/posts";
+                } else {
+                    return "redirect:/not_found";
+                }
+            }
+        }
+
+        return "redirect:/bad_request";
     }
 
     @GetMapping(path = "/thread")
     public String getThreadPage(@RequestParam Integer id , Model model) {
-        UserDetails principal;
-        try {
-            principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        } catch (Exception err) {
-            principal = null;
-        }
-
-        User user = principal == null ? null :userService.getByName(principal.getUsername());
         Post post = postService.getId(id).get();
+
+        String uname = FoPorUtils.getActiveUserName();
+        User user = uname == null ? null : userService.getByName(uname);
+        UserRole urole = user == null ? UserRole.NONE : user.getUserRole();
 
         var comments = commentService.getCommentForPost(post);
         var followers = post.getPostFollowedBy();
         var followStatus = user != null && !followers.isEmpty() && followers.contains(user);
 
-        model.addAttribute("uid" , user == null ? null : user.getUserId());
+        model.addAttribute("post_author_uid" , post.getPostAuthor().getUserId());
+        model.addAttribute("urole" , urole);
         model.addAttribute("followStatus" , followStatus);
         model.addAttribute("post" , post);
         model.addAttribute("comments" , comments);

@@ -1,0 +1,19 @@
+#auth-container {
+    width: 25%;
+}
+
+#auth-container2 {
+    width: 50%;
+}
+
+@media screen and (max-width: 350px) {
+    #auth-container {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    #auth-container2 {
+        width: 95%;
+    }
+}

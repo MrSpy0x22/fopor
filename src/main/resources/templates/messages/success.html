@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" th:rel="stylesheet" th:href="@{/css/mbox.css}">
+    <!-- METRO4 CSS -->
+    <link type="text/css" th:rel="stylesheet" th:href="@{/css/metro4/metro-4.4.3.css}">
+    <title>Sukces!</title>
+</head>
+<body class="bg-green fg-white mb-body">
+<h1 class="mb-h1">Zapisano</h1>
+<p class="mb-p">Możesz teraz zamknąć to okno.</p>
+<span class="mb-span mif-checkmark"></span>
+
+<script>
+    $(window).unload(() => window.opener.location.reload());
+</script>
+</body>
+</html>

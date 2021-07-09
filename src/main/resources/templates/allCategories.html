@@ -25,43 +25,15 @@
 
             <div class="ce-container">
                 <div class="c-panel">
-                    <div data-role="accordion" data-role-accordin="true" data-one-frame="false">
-                        <div class="frame">
-                            <div class="heading" style="background: transparent;">Filtrowanie</div>
-                            <div class="content">
-                                <div class="row">
-                                    <div data-role="bottongroup">
-                                        <button id="btn_size10" class="button">10</button>
-                                        <button id="btn_size25" class="button active">25</button>
-                                        <button id="btn_size50" class="button">50</button>
-                                    </div>
-                                    <select data-role="select">
-                                        <option>Data</option>
-                                        <option>Nazwa</option>
-                                        <option>Użytkownik</option>
-                                    </select>
-                                    <button class="button">
-                                        <span class="mif-sort-asc"></span>
-                                    </button>
-                                    <button class="button">
-                                        <span class="mif-sort-desc"></span>
-                                    </button>
-                                    <button id="cat-load" class="button primary">Filtruj</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="c-panel">
                     <div class="mb-4">
                         <button id="action_button_add" class="button primary border-radius-4"><span class="mif-add"></span><span>Nowa</span></button>
-                        <button id="action_button_info" class="float-right button border-radius-4"><span class="mif-info"></span></button>
+                        <button id="btn-filter" class="float-right button border-radius-4"><span class="mif-filter"></span></button>
                         <input id="non_empty_check" class="float-right" type="checkbox" data-role="switch" data-caption="Pokaż puste" data-caption-position="left" checked>
-                        <input id="grid_view_check" class="float-right" type="checkbox" data-role="switch" data-caption="Lista" data-caption-position="left">
+                        <input th:if="${admin}" id="grid_view_check" class="float-right" type="checkbox" data-role="switch" data-caption="Zarządzaj" data-caption-position="left">
                     </div>
                     <div id="data-view-container"> </div>
 
-                    <header th:replace="fragments/f_pagination :: pagination"></header>
+                    <div id="pagination-container"></div>
                 </div>
             </div>
         </div>
@@ -71,9 +43,17 @@
     <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
     <!-- My scripts -->
     <script th:src="@{/js/ui_utils.js}"></script>
+    <script th:src="@{/js/filter.js}"></script>
+    <script th:src="@{/js/sidebar.js}"></script>
 
-    <script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        let isAdmin = /*[[${admin}]]*/ false;
+        /*]]>*/
+
         let categoryData = null;
+        let currentPage = 0;
+        let totalPages = -1;
 
         function notifyError(text) {
             let notify = Metro.notify;
@@ -84,18 +64,11 @@
             }
         }
 
-        let pageNumber = 0;
-        let pageSize = 10;
-        let pageSort = 0;
-        let pageOrder = "asc";
-        $("#btn_size10").click(function () { pageSize = 10; } );
-        $("#btn_size25").click(function () { pageSize = 25; } );
-        $("#btn_size50").click(function () { pageSize = 50; } );
-        $(document).ready(() => { getCategories() });
-        $("#cat-load").click(() => getCategories());
+        $(document).ready(() => { getContent() });
+        $("#cat-load").click(() => getContent());
         let nonEmptyCheck = $("#non_empty_check");
         $(nonEmptyCheck).on("click" , () => {
-            getCategories();
+            getContent();
         });
 
         let gridViewCheck = $("#grid_view_check");
@@ -107,39 +80,40 @@
 
         $("#action_button_add").click(() => categoryPopup(selectedCategory));
 
-        $("#action_button_info").click(() => {
-            if (selectedCategory === -1) {
-                modalUpdate("Wybierz kategorię prawym przyciskiem myszy i ponów akcję, aby zobaczyć szczegóły." ,
-                    "Nie wybrano kategorii");
-            }
-        })
-
-        function getCategories() {
+        var getContent = (forceRecreate) => {
             let ignore_empty = $(nonEmptyCheck).is(":checked");
 
             $.ajax({
                 type: "GET" ,
                 async: true ,
-                url: `/api/category/${ignore_empty ? "all" : "nonempty"}` ,
+                url: `/api/category/${ignore_empty ? "all" : "nonempty"}?page=${currentPage}&size=${filterPageSize}` ,
                 timeout: 1000 ,
-                //url: `/api/category?page=${pageNumber}&size=${pageSize}&order=${pageOrder === "desc" ? "desc" : "asc"}&sort=${pageSort}` ,
                 contentType: 'application/json; charset=utf-8'
             }).then(function (result) {
 
                 if (typeof result === "string") {
-                    let objects = JSON.parse(result).content;
-                    console.log(objects);
-                    if (objects === undefined) {
-                        notifyError("Błąd przetwarzania obiektu.");
+                    let objects = JSON.parse(result);
+                    let content = objects.content;
+
+                    // Maks stron przy podanym ustawieniu
+                    let total = objects.totalPages;
+
+                    if (content === undefined) {
+                        notifyError("Nie znaleziono żadnych danych.");
                     } else {
-                        categoryData = objects;
+                        if (currentPage >= total) {
+                            currentPage = total - 1;
+                        }
+
+                        categoryData = content;
                         showData();
+                        createPagination(total);
                     }
                 } else {
                     notifyError("Serwer zwrócił dane, które nie mogą zostać przetworzone.");
                 }
             } , function (xhr) {
-                notifyError("Błąd żądania!");
+                notifyError("Błąd przetwarzan9ia żądania.");
             });
         }
 
@@ -173,28 +147,29 @@
                 let tableBody = $("<tbody>").appendTo(categories);
 
                 categoryData.forEach((d) => {
-                let row = $("<tr>" , {id: "cat" + d.categoryId});
-                let buttons = $("<td>");
+                    let row = $("<tr>" , {id: "cat" + d.categoryId});
+                    let buttons = $("<td>");
 
-                $(buttons).append(
-                    ($("<button>" , { class: "button outline secondary small" , style: "margin-right: 3px" })
-                        .click(() => categoryPopup(d.categoryId , false)))
-                        .append($("<span>" , { class: "mif-pencil" })));
-                $(buttons).append(
-                    ($("<button>" , { class: "button outline alert small" , style: "margin-right: 3px" })
-                        .click(() => categoryPopup(d.categoryId , true)))
-                        .append($("<span>" , { class: "mif-bin" })));
+                    if (isAdmin) {
+                        $(buttons).append(
+                            ($("<button>" , { class: "button outline secondary small" , style: "margin-right: 3px" })
+                                .click(() => categoryPopup(d.categoryId , false)))
+                                .append($("<span>" , { class: "mif-pencil" })));
+                        $(buttons).append(
+                            ($("<button>" , { class: "button outline alert small" , style: "margin-right: 3px" })
+                                .click(() => categoryPopup(d.categoryId , true)))
+                                .append($("<span>" , { class: "mif-bin" })));
+                    }
 
-                $(row).append(buttons);
-                $(row).append($("<td>").append($("<span>" , {class: "mif-" + d.categoryIcon})));
-                $(row).append($("<td>").html(d.categoryName));
-                $(row).append($("<td>").html(d.categoryCreationCreator));
-                $(row).append($("<td>").html(d.categoryCreationTime));
-                $(tableBody).append(row);
-            });
+                    $(row).append(buttons);
+                    $(row).append($("<td>").append($("<span>" , {class: "mif-" + d.categoryIcon})));
+                    $(row).append($("<td>").html(d.categoryName));
+                    $(row).append($("<td>").html(d.categoryCreator.userName));
+                    $(row).append($("<td>").html(d.categoryCreationTime));
+                    $(tableBody).append(row);
+                });
             }
         }
-
 
         function categoryPopup(id , del) {
             let url = typeof id == "number" && id >= 0 ? `/category?id=${id}` : "/category";
@@ -204,6 +179,39 @@
             }
 
             window.open(url , "Kategoria" , "width=500, height=600")
+        }
+
+        function createPagination(max) {
+            if (totalPages !== max) {
+                const paginationContainer = $("#pagination-container").html("");
+
+                if (max !== 1) {
+                    const paginationElement = $("<ul>" , { class: "pagination flex-justify-center" }).appendTo(paginationContainer);
+
+                    for (let i = 0 ; i < max ; i++) {
+                        let contentLi = $("<li>" , { class: "page-item" });
+                        let contentA = $("<a>" , { class: "page-link"}).text(`${i + 1}`);
+
+                        if (i === currentPage) {
+                            contentLi.addClass("active");
+                        }
+
+                        $(contentLi).append(contentA);
+                        $(paginationElement).append(contentLi);
+                    }
+
+                    totalPages = max;
+
+                    $(document).on('click','.page-link' , function() {
+                        currentPage = parseInt($(this).text()) - 1;
+
+                        $(".page-item, .active").removeClass("active");
+                        $(this).parent().addClass("active");
+
+                        getContent();
+                    });
+                }
+            }
         }
     </script>
 

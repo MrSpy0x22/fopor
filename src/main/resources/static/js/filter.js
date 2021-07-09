@@ -33,7 +33,6 @@ if (filterButton !== undefined) {
                         <input id="fltr_order" type="checkbox" data-role="checkbox" data-caption="Roznący" ${filterOrder ? "checked" : ""}>
                     </div>
                 </div>`,
-            cls: "dark",
             closeButton: true ,
             actions: [
                 {
@@ -45,6 +44,8 @@ if (filterButton !== undefined) {
 
                         window.localStorage.setItem(sortingKey , filterOrder);
                         window.localStorage.setItem(pageSizeKey , filterPageSize);
+
+                        getContent(true);
                     }
                 },
                 {

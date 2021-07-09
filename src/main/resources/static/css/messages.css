@@ -75,20 +75,18 @@
 }
 
 .author-reply {
-    border-color: #0056b8;
     background-color: #0366d6;
     color: #FFF;
 }
 
 .other-reply {
-    border-color: #ababab;
     background-color: #cdcdcd;
     color: #000;
 }
 
 .post-message {
-    padding: 10px 5px;
-    margin-top: 5px;
+    padding: 10px;
+    margin: 10px 5px;
     border-radius: 5px;
     background: #e6e6e6;
 }

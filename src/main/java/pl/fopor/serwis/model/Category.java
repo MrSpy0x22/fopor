@@ -1,5 +1,6 @@
 package pl.fopor.serwis.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,6 +33,7 @@ public class Category {
     @NotNull(message = "To pole jest wymagane")
     String categoryIcon;
 
+    @JsonFormat(pattern="HH:mm:ss, dd/MM/yyyy")
     @CreationTimestamp
     LocalDateTime categoryCreationTime;
 
@@ -40,7 +42,7 @@ public class Category {
     User categoryCreator;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "postCategory")
+    @OneToMany(mappedBy = "postCategory" , cascade = CascadeType.REMOVE)
     List<Post> categoryPosts;
 
     @Override

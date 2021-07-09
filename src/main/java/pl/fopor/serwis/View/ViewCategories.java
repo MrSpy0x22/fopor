@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpStatusCodeException;
 import pl.fopor.serwis.Utils.FoPorDataUtils;
-import pl.fopor.serwis.model.Category;
-import pl.fopor.serwis.model.ContentState;
-import pl.fopor.serwis.model.User;
+import pl.fopor.serwis.Utils.FoPorUtils;
+import pl.fopor.serwis.model.*;
 import pl.fopor.serwis.service.CategoryService;
+import pl.fopor.serwis.service.PostService;
 import pl.fopor.serwis.service.UserService;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -26,18 +27,24 @@ public class ViewCategories {
 
     private final CategoryService categoryService;
     private final UserService userService;
+    private final PostService postService;
 
     @Autowired
-    public ViewCategories(CategoryService categoryService, UserService userService) {
+    public ViewCategories(CategoryService categoryService, UserService userService, PostService postService) {
         this.categoryService = categoryService;
         this.userService = userService;
+        this.postService = postService;
     }
 
     @GetMapping("/categories")
     public String getPage(Model model ) {
         List<Category> cats = categoryService.getAll();
 
+        String uname = FoPorUtils.getActiveUserName();
+        UserRole urole = uname == null ? UserRole.NONE : userService.getByName(uname).getUserRole();
+
         model.addAttribute("catList" , cats);
+        model.addAttribute("admin" , urole.equals(UserRole.ADMIN));
         return "allCategories";
     }
 
@@ -47,6 +54,10 @@ public class ViewCategories {
 
         if (id != null) {
             category = categoryService.getId(id).orElse(null);
+
+            if (category == null) {
+                return "messages/not_found";
+            }
         } else {
             category = new Category();
         }
@@ -63,23 +74,51 @@ public class ViewCategories {
             return "popups/p_catForm";
         } else {
             try {
-                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                String uname = ((UserDetails) principal).getUsername();
-                User user = userService.getByName(uname);
+                User user = userService.getByName(FoPorUtils.getActiveUserName());
 
                 if (user == null) {
-                    return "redirect:/error";
+                    return "redirect:/access_denied";
                 } else {
                     category.setCategoryCreator(user);
                     categoryService.save(category);
                 }
             } catch (HttpStatusCodeException e) {
-                bindResult.rejectValue(null , String.valueOf(e.getStatusCode().value()) , e.getStatusCode().getReasonPhrase());
+                bindResult.rejectValue("error" , String.valueOf(e.getStatusCode().value()) , e.getStatusCode().getReasonPhrase());
+                System.out.println("Exception catched: " + e.getMessage());
                 return "popups/p_catForm";
             }
 
-            // Redirect to post
-            return "redirect:/categories";
+            return "redirect:/success";
+        }
+    }
+
+    @PostMapping(path = "/category" , params = "delete")
+    @Transactional
+    public String deleteCategory(@ModelAttribute Category category) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String uname = ((UserDetails) principal).getUsername();
+        User user = userService.getByName(uname);
+
+        User creator = category.getCategoryCreator();
+
+        if (creator != null) {
+            creator.removeCreatedCategory(category);
+            userService.save(creator);
+        }
+
+        // Usuwanie wszystkich postów w kategorii
+        var posts = category.getCategoryPosts();
+        if (posts != null) {
+            for (Post post : posts) {
+                postService.deleteId(post.getPostId());
+            }
+        }
+
+        if (user.getUserRole() == UserRole.ADMIN) {
+            categoryService.deleteId(category.getCategoryId());
+            return "redirect:/deleted";
+        } else {
+            return "redirect:/access_denied";
         }
     }
 }

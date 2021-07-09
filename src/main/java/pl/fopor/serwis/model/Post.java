@@ -1,13 +1,14 @@
 package pl.fopor.serwis.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,9 +30,11 @@ public class Post {
     @Size(min = 16 , max = 1024 , message = "To pole musi zwierać od {min} do {max} znaków")
     String postContent;
 
+    @JsonFormat(pattern="HH:mm:ss, dd/MM/yyyy")
     @CreationTimestamp
     LocalDateTime postCreationTime;
 
+    @JsonFormat(pattern="HH:mm:ss, dd/MM/yyyy")
     @CreationTimestamp
     LocalDateTime postLstEditTime;
 
@@ -48,13 +51,12 @@ public class Post {
     @JoinColumn(name = "fk_post_category")
     Category postCategory;
 
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"commentAuthor" , "commentPost"})
+    @OneToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)// , orphanRemoval = true)
     @JoinColumn(name = "fk_post_comments")
     List<Comment> postComments;
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL , mappedBy = "userFollowedPosts")
     Set<User> postFollowedBy = new HashSet<>();
-
 }

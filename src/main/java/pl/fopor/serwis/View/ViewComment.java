@@ -33,9 +33,8 @@ public class ViewComment {
 
     @GetMapping("/reply")
     public String privateGetReplyPage(@RequestParam(name = "pid" , required = true) Integer pid , Model model) {
-
         if (pid == null || pid < 1) {
-            return "redirect:/error";
+            return "redirect:/bad_request";
         }
 
         try {
@@ -43,6 +42,7 @@ public class ViewComment {
             Comment comment = new Comment();
             comment.setCommentPost(post);
 
+            model.addAttribute("post" , post);
             model.addAttribute("comment" , comment);
         } catch (Exception err) {
             return "redirect:/error";
@@ -51,15 +51,18 @@ public class ViewComment {
     }
 
     @PostMapping(path = "/reply")
-    public String postWrite(@ModelAttribute @Valid Comment comment , @RequestParam(name = "pid" , required = true) Integer pid, BindingResult bindResult) {
+    public String postWrite(@ModelAttribute @Valid Comment comment, BindingResult bindResult , @RequestParam(name = "pid" , required = true) Integer pid , Model model) {
+        Post post = pid == null ? null : postService.getId(pid).orElse(null);
+
         if (bindResult.hasErrors()) {
+            model.addAttribute("post" , post);
+            model.addAttribute("comment" , comment);
             return "writeReply";
         } else {
             try {
                 Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                 String uname = ((UserDetails) principal).getUsername();
                 User user = userService.getByName(uname);
-                Post post = postService.getId(pid).orElseThrow();
 
                 if (user == null) {
                     return "redirect:/error";

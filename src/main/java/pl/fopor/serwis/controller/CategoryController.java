@@ -2,15 +2,13 @@ package pl.fopor.serwis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import pl.fopor.serwis.model.Category;
 import pl.fopor.serwis.service.CategoryService;
 
 import javax.validation.Valid;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/category")
@@ -28,15 +26,20 @@ public class CategoryController implements ControllerTpl<Category> {
         return categoryService.getId(id).orElse(null);
     }
 
+    @GetMapping("/list")
+    public Map<Integer , String> getList() {
+        return categoryService.getList();
+    }
+
     @GetMapping("/all")
     @Override
     public Page<Category> getPageOf(Pageable pageable) {
-        return categoryService.getPageWithEmptyCheck(true , pageable);
+        return categoryService.getPage(pageable);
     }
 
     @GetMapping("/nonempty")
     public Page<Category> getPageOfNonEmpty(Pageable pageable) {
-        return categoryService.getPageWithEmptyCheck(false , pageable);
+        return categoryService.getPageNonEmpty(pageable);
     }
 
     @PostMapping

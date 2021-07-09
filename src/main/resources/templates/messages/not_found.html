@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" th:rel="stylesheet" th:href="@{/css/mbox.css}">
+    <!-- METRO4 CSS -->
+    <link type="text/css" th:rel="stylesheet" th:href="@{/css/metro4/metro-4.4.3.css}">
+    <title>Nie znaleziono obiektu</title>
+</head>
+<body class="bg-amber fg-black mb-body">
+<h1 class="mb-h1">Nie znaleziono</h1>
+<p class="mb-p">Obiekt, którego szukasz już nie istnieje.</p>
+<span class="mb-span mif-database"></span>
+
+<script>
+    $(window).unload(() => window.opener.location.reload());
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+.mb-body {
+    margin: 0 auto;
+    max-width: 400px;
+    padding-top: 25px;
+}
+
+.mb-h1 , .mb-p , .mb-span {
+    text-align: center;
+}
+
+.mb-h1 {
+    margin-bottom: 10px;
+}
+
+.mb-p {
+    margin-bottom: 20px;
+}
+
+.mb-span {
+    font-size: 72px;
+    display:block !important;
+}

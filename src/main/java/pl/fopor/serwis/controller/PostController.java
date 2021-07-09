@@ -46,13 +46,15 @@ public class PostController implements ControllerTpl<Post> {
     }
 
     @GetMapping("/preview")
-    public Page<Post> getPreviewPage(Pageable pageable) {
-        var page = postService.getPage(pageable);
-        page.getContent()
-                .stream()
-                .filter(p -> p.getPostContent().length() > 128)
-                .forEach(p -> p.setPostContent(p.getPostContent().substring(0 , 128)));
-        return page;
+    public Page<Post> getPreviewPage(
+            @RequestParam(name = "cid" , required = false) Integer categoryId ,
+            @RequestParam(name = "solved" , required = false , defaultValue = "true") Boolean showSolved ,
+            Pageable pageable) {
+        if (categoryId == null || categoryId < 0) {
+            return postService.getPreviewForAll(showSolved , pageable);
+        } else {
+            return postService.getPreviewForCategory(showSolved , categoryId , pageable);
+        }
     }
 
     @PostMapping

@@ -5,12 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pl.fopor.serwis.Utils.FoPorSearchResultModel;
 import pl.fopor.serwis.model.Category;
 import pl.fopor.serwis.repository.CategoryRepository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class CategoryService implements ServiceTpl<Category> {
@@ -26,29 +25,24 @@ public class CategoryService implements ServiceTpl<Category> {
         return categoryRepository.findById(id);
     }
 
-    @Override
-    public List<Category> getAll() {
-        return categoryRepository.findAll();
+    public Map<Integer , String> getList() {
+        var tmp = categoryRepository.findAll();
+        var ret = new HashMap<Integer , String>();
+
+        tmp.forEach(c -> ret.put(c.getCategoryId() , c.getCategoryName()));
+
+        return ret;
     }
 
-    /** @deprecated Należy użyć {@link #getPageWithEmptyCheck(boolean, Pageable)} */
     @Override
     public Page<Category> getPage(Pageable pageable) {
-        return null;
+        return categoryRepository.findAll(pageable);
     }
 
-    public Page<Category> getPageWithEmptyCheck(boolean ignoreEmpty , Pageable pageable) {
-        List<Category> categories = categoryRepository.findAll();
-
-        if (!ignoreEmpty) {
-            categories = categories
-                    .stream()
-                    .filter(c -> c.getCategoryPosts().size() > 0)
-                    .collect(Collectors.toList());
-        }
-
-        return new PageImpl<Category>(categories , pageable , pageable.getPageSize());
+    public Page<Category> getPageNonEmpty(Pageable pageable) {
+        return categoryRepository.findNonEmpty(pageable);
     }
+
     @Override
     public Category save(Category object) {
         return categoryRepository.save(object);
@@ -64,5 +58,16 @@ public class CategoryService implements ServiceTpl<Category> {
         }
 
         return false;
+    }
+
+    public Page<FoPorSearchResultModel> getCategorySearchResult(String text , Pageable pageable) {
+        var results = categoryRepository.findAllBySearchCriteria(text , pageable);
+        var result = new ArrayList<FoPorSearchResultModel>();
+
+        for (var r : results.getContent()) {
+            result.add(new FoPorSearchResultModel(r.getCategoryName() , "Kategoria" , r.getCategoryCreationTime()));
+        }
+
+        return new PageImpl<>(result , pageable , result.size());
     }
 }

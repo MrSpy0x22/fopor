@@ -20,22 +20,27 @@
         <form method="post" th:action="@{/category}" th:object="${category}">
             <div class="form-group">
                 <label>Nazwa:</label>
-                <input th:field="*{categoryName}" type="text" data-prepend="<span class='mif-tag'></span>" data-role="input" placeholder="podaj nazwę">
+                <input th:field="*{categoryName}" type="text" data-prepend="<span class='mif-tag'></span>" data-role="input"
+                       placeholder="podaj nazwę" th:disabled="${del}">
+                <input th:field="*{categoryId}" type="hidden">
+                <small th:if="${#fields.hasErrors('categoryName')}" th:errors="*{categoryName}" class="fg-red">Błąd!</small>
             </div>
             <div class="form-group">
                 <label>Ikona:</label>
-                <select id="cat-ico" th:field="*{categoryIcon}" data-role="select">
+                <select id="cat-ico" th:field="*{categoryIcon}" data-role="select" th:disabled="${del}">
                     <option th:each="i : ${icons}" th:value="${i}" th:text="${i}"
                             th:attr="data-template=${'<span class=&quot;icon mif-' + i +  '&quot;></span> $1'}"></option>
                 </select>
+                <small th:if="${#fields.hasErrors('categoryIcon')}" th:errors="*{categoryIcon}" class="fg-red">Błąd!</small>
             </div>
             <div class="form-group">
                 <label>Kolor:</label>
-                <select th:field="*{categoryAccent}" data-role="select">
+                <select th:field="*{categoryAccent}" data-role="select" th:disabled="${del}">
                     <option th:each="c : ${colors}" th:value="${c.getKey()}" th:text="${c.getValue()}"
                             th:class="${c.getKey() != null ? 'fg-' + c.getKey() : ''}">
                     </option>
                 </select>
+                <small th:if="${#fields.hasErrors('categoryAccent')}" th:errors="*{categoryAccent}" class="fg-red">Błąd!</small>
             </div>
             <div class="form-group">
                 <button th:if="${del != null && del}" type="submit" class="button alert" name="delete">

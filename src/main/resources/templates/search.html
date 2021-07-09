@@ -25,22 +25,15 @@
         <div id="searchContainer" class="cf sb">
             <div class="right magnifier"></div>
             <input class="right" type="text" id="search-box" placeholder="Wpisz frazę"/>
-            <input type="submit" class="input-search-button" value="Szukaj" id="search-button">
+            <button id="search-button">
         </div>
 
         <div class="ce-container">
             <div class="c-panel">
-                <table id="table" class="table stripped row-hover">
-                    <thead>
-                    <tr>
-                        <th>Tytuł</th>
-                        <th>Twórca</th>
-                        <th>Data utworzenia</th>
-                        <th>Kategoria</th>
-                    </tr>
-                    </thead>
-                    <tbody id="trows"></tbody>
-                </table>
+
+                <div id="data-view-container"> </div>
+
+                <div id="pagination-container"></div>
             </div>
         </div>
     </div>
@@ -49,59 +42,121 @@
 <!-- METRO4 -->
 <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
 
+<script th:src="@{/js/sidebar.js}"></script>
+<script th:src="@{/js/ui_utils.js}"></script>
+
 <script>
-    function notifyError(text) {
-        let notify = Metro.notify;
-        console.error(text);
+    let container = Metro.getPlugin("#data-view");
+    let searchData = null;
+    let currentPage = 0;
+    let totalPages = -1;
 
-        if (notify !== undefined) {
-            notify.create(text , "Błąd" , { cls: "alert" });
+    $("#search-button").click(() => getContent());
+
+    function getContent() {
+        let text = $("#search-box").val();
+
+        if (text !== undefined && text.length < 3) {
+            modalError("Podaj przynajmniej 3 znaki.");
+            return;
         }
-    }
 
-    function getPosts() {
         $.ajax({
             type: "GET" ,
             async: true ,
-            url: "/api/post/search/" ,
-            data: {"postTitle": $('#search-box').val()},
+            url: `/api/search?text=${encodeURIComponent(text)}` ,
             timeout: 1000 ,
-            contentType: 'application/json; charset=utf-8',
+            contentType: 'application/json; charset=utf-8'
         }).then(function (result) {
-            $("#trows").clear();
 
             if (typeof result === "string") {
-                if (result.length === 0) {
-                    console.error("pusto")
-                }
-                console.log(result);
-                let objects = JSON.parse(result).content;
-                console.log(objects);
-                if (objects === undefined) {
-                    notifyError("Błąd przetwarzania obiektu.");
+                let objects = JSON.parse(result);
+                let content = objects.content;
+
+                // Maks stron przy podanym ustawieniu
+                let total = objects.totalPages;
+
+                if (content === undefined) {
+                    notifyError("Nie znaleziono żadnych danych.");
                 } else {
-                    objects.forEach((o) => {
-                        let row = $("<tr>" , {id: "post" + o.postId});
-                        let link = $("<a>" , {class: "button link" , href: `/thread?id=${o.postId}`}).html(o.postTitle);
-                        $(row).append($("<td>").append(link));
-                        $(row).append($("<td>").html(o.postAuthor.userName));
-                        $(row).append($("<td>").html(o.postCreationTime));
-                        $(row).append($("<td>").html(o.postCategory.categoryName));
-                        $("#trows").append(row);
-                    });
+                    if (currentPage >= total) {
+                        currentPage = total - 1;
+                    }
+
+                    searchData = content;
+                    showData();
+                    createPagination(total);
                 }
             } else {
                 notifyError("Serwer zwrócił dane, które nie mogą zostać przetworzone.");
             }
         } , function (xhr) {
-            notifyError("Błąd żądania!");
+            notifyError("Błąd przetwarzan9ia żądania.");
         });
     }
 
-    $("#search-button").on("click", function()
-    {
-        getPosts();
-    });
+    function showData() {
+
+        let listContainer = $("<ul>");
+        $(listContainer).attr("data-view" , "table");
+        $(listContainer).attr("data-select-node" , "true");
+        $(listContainer).attr("data-structure" , "{\"date\": true, \"name\": true}");
+
+        searchData.forEach((d) => {
+            let icon = "";
+            let type = d.srType;
+
+            if (type.toLowerCase() === "post") {
+                icon = "mif-chat";
+            } else if (type.toLowerCase() === "comment") {
+                icon = "mif-chat-bubble-outline";
+            } else if (type.toLowerCase() === "category") {
+                icon = "mif-books";
+            }
+
+            let listElement = $("<li>");
+            $(listElement).attr("data-icon" , `<span class=\"${icon}\"`);
+            $(listElement).attr("data-caption" , `${d.srTitle}`);
+            $(listElement).attr("data-date" , `${d.srDatetime}`);
+            $(listElement).attr("data-name" , `${type}`);
+            $(listElement).appendTo(listContainer);
+        });
+
+        $(container).append(listContainer);
+    }
+
+    function createPagination(max) {
+        if (totalPages !== max) {
+            const paginationContainer = $("#pagination-container").html("");
+
+            if (max !== 1) {
+                const paginationElement = $("<ul>" , { class: "pagination flex-justify-center" }).appendTo(paginationContainer);
+
+                for (let i = 0 ; i < max ; i++) {
+                    let contentLi = $("<li>" , { class: "page-item" });
+                    let contentA = $("<a>" , { class: "page-link"}).text(`${i + 1}`);
+
+                    if (i === currentPage) {
+                        contentLi.addClass("active");
+                    }
+
+                    $(contentLi).append(contentA);
+                    $(paginationElement).append(contentLi);
+                }
+
+                totalPages = max;
+
+                $(document).on('click','.page-link' , function() {
+                    currentPage = parseInt($(this).text()) - 1;
+
+                    $(".page-item, .active").removeClass("active");
+                    $(this).parent().addClass("active");
+
+                    getContent();
+                });
+            }
+        }
+    }
 </script>
 
 </body>

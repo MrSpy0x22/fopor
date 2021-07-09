@@ -1,5 +1,6 @@
 package pl.fopor.serwis.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,7 +33,8 @@ public class User {
     @NotNull(message = "Hasło jest polem obowiązkowym")
     String userPassword;
 
-    String userRole;
+    @Enumerated(EnumType.STRING)
+    UserRole userRole;
 
     @Column(unique = true)
     @Size(min = 2 , max = 32 , message = "To pole musi zawierać {min}-{max} znaków.")
@@ -48,15 +50,16 @@ public class User {
 
     Boolean userEnabled;
 
+    @JsonFormat(pattern="HH:mm:ss, dd/MM/yyyy")
     @CreationTimestamp
     LocalDateTime userJoinTime;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "postAuthor")
+    @OneToMany(mappedBy = "postAuthor" , cascade = CascadeType.ALL)
     List<Post> userPosts;
 
     @JsonIgnore
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     List<Category> createdCategories;
 
     @JsonIgnore
@@ -77,6 +80,13 @@ public class User {
         if (post != null) {
             this.getUserFollowedPosts().remove(post);
             post.getPostFollowedBy().remove(this);
+        }
+    }
+
+    public void removeCreatedCategory(Category category) {
+        if (category != null) {
+            this.getCreatedCategories().remove(category);
+            category.setCategoryCreator(null);
         }
     }
 

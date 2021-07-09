@@ -10,91 +10,182 @@
     <!-- METRO4 -->
     <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
 
-    <title>Lista kategorii</title>
+    <title>Lista postów</title>
 </head>
 <body>
-<header th:replace="fragments/f_toolbar :: toolbar"></header>
+    <header th:replace="fragments/f_toolbar :: toolbar"></header>
 
-<!-- PAGE WRAPPER -->
-<div id="wrapper">
-    <!-- SIDEBAR -->
-    <div th:replace="fragments/f_sidebar :: sidebar(active_item='categories')"></div>
+    <!-- PAGE WRAPPER -->
+    <div id="wrapper">
+        <!-- SIDEBAR -->
+        <div th:replace="fragments/f_sidebar :: sidebar(active_item='posts')"></div>
 
-    <!-- CONTENT OF CURRENT VIEW -->
-    <div id="page" class="content-element">
+        <!-- CONTENT OF CURRENT VIEW -->
+        <div id="page" class="content-element">
 
-        <div class="ce-container">
-            <div class="c-panel">
-                <div class="mb-4">
+            <div class="ce-container">
+                <div class="c-panel">
+                    <div class="mb-4">
+
+                        <ul class="group-list horizontal border:none;">
+                            <li>
+                                <select id="categories-list" data-role="select">
+                                    <option value="" selected>Wszystkie kategorie</option>
+                                    <option th:each="c : ${catList}" th:value="${c.key}" th:text="${c.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <button id="btn-filter" class="float-right button border-radius-4"><span class="mif-filter"></span></button>
+                                <input id="solved_check" class="float-right" type="checkbox" data-role="switch" data-caption="Pokaż rozwiązane" data-caption-position="left">
+                            </li>
+                        </ul>
+
+                    </div>
+                    <div id="data-view-container"></div>
+                    <div id="pagination-container"></div>
                 </div>
-                <div id="data-view-container"> </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- METRO4 -->
-<script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
-<!-- My scripts -->
-<script th:src="@{/js/ui_utils.js}"></script>
+    <!-- METRO4 -->
+    <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
+    <!-- My scripts -->
+    <script th:src="@{/js/ui_utils.js}"></script>
+    <script th:src="@{/js/filter.js}"></script>
+    <script th:src="@{/js/sidebar.js}"></script>
 
-<script>
-    let postsData = null;
+    <script>
+        let postsData = null;
+        let currentPage = 0;
+        let totalPages = -1;
+        let categorySelected = -1;
+        let showSolved = false;
 
-    function notifyError(text) {
-        let notify = Metro.notify;
-        console.error(text);
+        $("#categories-list").change((e) => {
+            categorySelected = parseInt(e.target.value);
+            getContent();
+        });
 
-        if (notify !== undefined) {
-            notify.create(text , "Błąd" , { cls: "alert" });
-        }
-    }
+        $("#solved_check").change((e) => {
+            showSolved = e.target.checked;
+            getContent();
+        });
 
-    $(document).ready(() => { getPostsPreview() });
+        $(document).ready(() => {
+            getContent();
 
-    function getPostsPreview() {
-        $.ajax({
-            type: "GET" ,
-            async: true ,
-            url: "/api/post/preview" ,
-            timeout: 1000 ,
-            //url: "/api/category?page=${pageNumber}&size=${pageSize}&order=${pageOrder === "desc" ? "desc" : "asc"}&sort=${pageSort}` ,
-            contentType: 'application/json; charset=utf-8'
-        }).then(function (result) {
+            showSolved = $("#solved_check").is(":checked");
+            categorySelected = parseInt($("#categories-list").val());
 
-            if (typeof result === "string") {
-                let objects = JSON.parse(result).content;
-                console.log(objects);
-                if (objects === undefined) {
-                    notifyError("Błąd przetwarzania obiektu.");
-                } else {
-                    postsData = objects;
-                    showData();
-                }
+        });
+
+        var getContent = () => {
+            let request = "/api/post/preview?";
+
+            if (isNaN(categorySelected)) {
+                request += `solved=${showSolved}`;
             } else {
-                notifyError("Serwer zwrócił dane, które nie mogą zostać przetworzone.");
+                request += `cid=${categorySelected}&solved=${showSolved}`;
             }
-        } , function (xhr) {
-            notifyError("Błąd żądania!");
-        });
-    }
 
-    function showData() {
-        let container = $("#data-view-container").clear();
+            request += `&page=${currentPage}&size=${filterPageSize}`;
 
-        postsData.forEach((d) => {
-            let postContainer = $("<div>");
-            let titleWrap = $("<span>" , { class: "pp-title" });
-            let title = $("<a>" , { href: `/thread?id=${d.postId}` , class: `button link` }).text(d.postTitle);
-            let content = $("<span>" , { class: "pp-content" }).text(`${d.postContent}...`);
+            $.ajax({
+                type: "GET" ,
+                async: true ,
+                url: request ,
+                timeout: 1000 ,
+                contentType: 'application/json; charset=utf-8'
+            }).then(function (result) {
 
-            $(titleWrap).append(title)
-            $(postContainer).append(titleWrap);
-            $(postContainer).append(content);
-            $(container).append(postContainer);
-        });
-    }
+                if (typeof result === "string") {
+                    let objects = JSON.parse(result);
+                    let content = objects.content;
 
-</script>
+
+                    // Maks stron przy podanym ustawieniu
+                    let total = objects.totalPages;
+
+                    if (content === undefined) {
+                        notifyError("Błąd przetwarzania obiektu.");
+                    } else {
+                        if (currentPage >= total) {
+                            currentPage = total - 1;
+                        }
+
+                        postsData = content;
+                        showData();
+                        createPagination(total);
+                    }
+                } else {
+                    notifyError("Serwer zwrócił dane, które nie mogą zostać przetworzone.");
+                }
+            } , function (xhr) {
+                notifyError("Błąd żądania!");
+            });
+        }
+
+        function showData() {
+            let container = $("#data-view-container").clear();
+            let postList = $("<ul>" , { class: "items-list" });
+
+            postsData.forEach((p) => {
+                let postContainer = $("<li>");
+                $("<span>" , {
+                    style: "text-align:center; border-radius: 0;" ,
+                    class: `avatar fg-white mif-${p.postCategory.categoryIcon} bg-${p.postCategory.categoryAccent}`
+                }).appendTo(postContainer);
+                $("<a>" , {
+                    style: "text-align:left !important;" ,
+                    class: "label button link" ,
+                    href: `/thread?id=${p.postId}`
+                }).text(p.postTitle).appendTo(postContainer);
+                $("<span>" , {class: "second-label"}).text(p.postContent).appendTo(postContainer);
+
+                if (p.postSolved) {
+                    $("<span>" , {class: "second-action mif-checkmark fg-green"}).appendTo(postContainer);
+                }
+                $(postContainer).appendTo(postList);
+            });
+
+            $(postList).appendTo(container);
+        }
+
+        function createPagination(max) {
+            console.log("max = " + max + " total = " + totalPages);
+            if (totalPages !== max) {
+                const paginationContainer = $("#pagination-container").html("");
+
+                if (max !== 1) {
+                    const paginationElement = $("<ul>" , { class: "pagination flex-justify-center" }).appendTo(paginationContainer);
+
+                    for (let i = 0 ; i < max ; i++) {
+                        let contentLi = $("<li>" , { class: "page-item" });
+                        let contentA = $("<a>" , { class: "page-link"}).text(`${i + 1}`);
+
+                        if (i === currentPage) {
+                            contentLi.addClass("active");
+                        }
+
+                        $(contentLi).append(contentA);
+                        $(paginationElement).append(contentLi);
+                    }
+
+                    totalPages = max;
+
+                    $(document).on('click','.page-link' , function() {
+                        currentPage = parseInt($(this).text()) - 1;
+
+                        $(".page-item, .active").removeClass("active");
+                        $(this).parent().addClass("active");
+
+                        getContent();
+                    });
+                }
+            }
+        }
+
+    </script>
 </body>
 </html>

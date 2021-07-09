@@ -35,7 +35,7 @@ public interface ControllerTpl<E> {
      */
     @Deprecated
     default List<E> getAll() {
-        return new ArrayList<E>();
+        return new ArrayList<>();
     }
 
     /**

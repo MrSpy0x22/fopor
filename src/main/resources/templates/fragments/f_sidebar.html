@@ -7,43 +7,44 @@
     <title>Sidebar</title>
 </head>
 <body>
-<div th:fragment="sidebar(active_item)" id="sidebar">
-    <a id="sb-btn-add" th:href="@{/write}" class="button primary border-radius-4 w-100" style="margin:10px 0;">
-        <span class="mif-note-add mif-lg"></span>
-        <span class="s-item-text">Napisz</span>
-    </a>
-    <nav class="s-nav">
-        <ul>
-            <li><a th:href="@{/index}" th:class="${active_item == 'index' ? 's-item-active' : ''}">
-                <span class="mif-home mif-lg"></span>
-                <span class="s-item-text">Strona główna</span>
-            </a></li>
-            <li><a th:href="@{/categories}" th:class="${active_item == 'categories' ? 's-item-active' : ''}">
-                <span class="mif-books mif-lg"></span>
-                <span class="s-item-text">Kategorie</span>
-            </a></li>
-            <li><a th:href="@{/search}" th:class="${active_item == 'search' ? 's-item-active' : ''}">
-                <span class="mif-search mif-lg"></span>
-                <span class="s-item-text">Wyszukiwarka</span>
-            </a></li>
-            <li><a th:href="@{/posts}" th:class="${active_item == 'posts' ? 's-item-active' : ''}">
-                <span class="mif-chat mif-lg"></span>
-                <span class="s-item-text">Wszystie posty</span>
-            </a></li>
-            <li><a th:href="@{/unresolved}" th:class="${active_item == 'unresolved' ? 's-item-active' : ''}">
-                <span class="mif-help mif-lg"></span>
-                <span class="s-item-text">Bez rozwiązania</span>
-            </a></li>
-            <li><a th:href="@{/saved}" th:class="${active_item == 'bookmarks' ? 's-item-active' : ''}">
-                <span class="mif-bookmark mif-lg"></span>
-                <span class="s-item-text">Zapisane</span>
-            </a></li>
-            <li><a th:href="@{/users}" th:class="${active_item == 'users' ? 's-item-active' : ''}">
-                <span class="mif-users mif-lg2x"></span>
-                <span class="s-item-text">Użytkownicy</span>
-            </a></li>
-        </ul>
-    </nav>
-</div>
+    <div th:fragment="sidebar(active_item)" id="sidebar">
+        <a id="sb-btn-add" th:href="@{/write}" class="button primary border-radius-4 w-100" style="margin:10px 0;">
+            <span class="mif-note-add mif-lg"></span>
+            <span class="s-item-text">Napisz</span>
+        </a>
+        <nav class="s-nav">
+            <ul>
+                <li><a th:href="@{/index}" th:class="${active_item == 'index' ? 's-item-active' : ''}">
+                    <span class="mif-home mif-lg"></span>
+                    <span class="s-item-text">Strona główna</span>
+                </a></li>
+                <li><a th:href="@{/categories}" th:class="${active_item == 'categories' ? 's-item-active' : ''}">
+                    <span class="mif-books mif-lg"></span>
+                    <span class="s-item-text">Kategorie</span>
+                </a></li>
+                <li><a th:href="@{/search}" th:class="${active_item == 'search' ? 's-item-active' : ''}">
+                    <span class="mif-search mif-lg"></span>
+                    <span class="s-item-text">Wyszukiwarka</span>
+                </a></li>
+                <li><a th:href="@{/posts}" th:class="${active_item == 'posts' ? 's-item-active' : ''}">
+                    <span class="mif-chat mif-lg"></span>
+                    <span class="s-item-text">Wszystie posty</span>
+                </a></li>
+                <li><a th:href="@{/unresolved}" th:class="${active_item == 'unresolved' ? 's-item-active' : ''}">
+                    <span class="mif-help mif-lg"></span>
+                    <span class="s-item-text">Bez rozwiązania</span>
+                </a></li>
+                <li><a th:href="@{/saved}" th:class="${active_item == 'bookmarks' ? 's-item-active' : ''}">
+                    <span class="mif-bookmark mif-lg"></span>
+                    <span class="s-item-text">Zapisane</span>
+                </a></li>
+                <li><a th:href="@{/users}" th:class="${active_item == 'users' ? 's-item-active' : ''}">
+                    <span class="mif-users mif-lg2x"></span>
+                    <span class="s-item-text">Użytkownicy</span>
+                </a></li>
+            </ul>
+        </nav>
+    </div>
+
 </body>
 </html>

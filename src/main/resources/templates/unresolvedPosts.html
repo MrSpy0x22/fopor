@@ -74,6 +74,8 @@
 <!-- METRO4 -->
 <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
 
+<script th:src="@{/js/sidebar.js}"></script>
+
 <script>
     function notifyError(text) {
         let notify = Metro.notify;
@@ -106,9 +108,6 @@
             $("#trows").clear();
 
             if (typeof result === "string") {
-                if (result.length === 0) {
-                    console.error("pusto")
-                }
                 let objects = JSON.parse(result).content;
                 console.log(objects);
                 if (objects === undefined) {

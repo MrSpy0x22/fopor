@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.HttpStatusCodeException;
 import pl.fopor.serwis.model.User;
+import pl.fopor.serwis.model.UserRole;
 import pl.fopor.serwis.service.UserService;
 
 import javax.validation.Valid;
@@ -69,7 +70,7 @@ public class ViewLoginRegister {
             try {
                 String userPasswd = user.getUserPassword();
                 user.setUserPassword(new BCryptPasswordEncoder().encode(userPasswd));
-                user.setUserRole("USER");
+                user.setUserRole(UserRole.USER);
                 user.setUserEnabled(true);
                 userService.save(user);
             } catch (HttpStatusCodeException e) {
