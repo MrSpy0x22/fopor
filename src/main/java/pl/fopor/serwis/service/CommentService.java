@@ -76,9 +76,14 @@ public class CommentService implements ServiceTpl<Comment> {
         var result = new ArrayList<FoPorSearchResultModel>();
 
         for (var r : results.getContent()) {
-            result.add(new FoPorSearchResultModel(r.getCommentContent() , "Komentarz" , r.getCommentCreationTime()));
+            result.add(new FoPorSearchResultModel(r.getCommentContent() , "Komentarz" , r.getCommentCreationTime(),
+                    "/thread?id=" + r.getCommentPost().getPostId()));
         }
 
         return new PageImpl<>(result , pageable , result.size());
+    }
+
+    public Long countAll() {
+        return commentRepository.count();
     }
 }

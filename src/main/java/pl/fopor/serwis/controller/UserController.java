@@ -61,8 +61,8 @@ public class UserController implements ControllerTpl<User> {
         return userService.deleteId(id);
     }
 
-    @PostMapping("/follow/{pid}")
-    public ResponseEntity<Void> setFollowerForPostId(@PathVariable Integer pid) {
+    @GetMapping("/follow/{pid}")
+    public ResponseEntity<Void> setFollowerForPostId(@PathVariable("pid") Integer pid) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String uname = ((UserDetails) principal).getUsername();
         User user = userService.getByName(uname);
@@ -81,7 +81,7 @@ public class UserController implements ControllerTpl<User> {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/unfollow/{pid}")
+    @GetMapping("/unfollow/{pid}")
     public ResponseEntity<Void> unfollowPost(@PathVariable Integer pid) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String uname = ((UserDetails) principal).getUsername();

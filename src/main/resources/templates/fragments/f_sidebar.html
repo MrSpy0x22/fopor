@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/css/sidebar.css}">
+
+    <link type="image/png" rel="icon" th:href="@{/favicon.png}">
     <title>Sidebar</title>
 </head>
 <body>
@@ -29,10 +31,6 @@
                 <li><a th:href="@{/posts}" th:class="${active_item == 'posts' ? 's-item-active' : ''}">
                     <span class="mif-chat mif-lg"></span>
                     <span class="s-item-text">Wszystie posty</span>
-                </a></li>
-                <li><a th:href="@{/unresolved}" th:class="${active_item == 'unresolved' ? 's-item-active' : ''}">
-                    <span class="mif-help mif-lg"></span>
-                    <span class="s-item-text">Bez rozwiązania</span>
                 </a></li>
                 <li><a th:href="@{/saved}" th:class="${active_item == 'bookmarks' ? 's-item-active' : ''}">
                     <span class="mif-bookmark mif-lg"></span>

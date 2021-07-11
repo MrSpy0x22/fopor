@@ -66,4 +66,7 @@ public class UserService implements ServiceTpl<User> {
         return userRepository.findUserByUserFollowedPosts(post);
     }
 
+    public Long countAll() {
+        return userRepository.count();
+    }
 }

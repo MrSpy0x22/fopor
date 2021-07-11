@@ -10,6 +10,7 @@ import pl.fopor.serwis.model.Category;
 import pl.fopor.serwis.model.Post;
 import pl.fopor.serwis.model.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -25,6 +26,15 @@ public interface PostRepository extends JpaRepository<Post , Integer> {
     @Query("SELECT p FROM Post p WHERE p.postSolved = :solved AND p.postCategory.categoryId = :category")
     Page<Post> findPreviewForCategory(@Param("solved") Boolean solved , @Param("category") Integer category , Pageable pageable);
 
+    @Query("SELECT p FROM Post p WHERE p.postCategory.categoryId = :category")
+    Page<Post> findPreviewForCategory(@Param("category") Integer category , Pageable pageable);
+
     @Query("SELECT p FROM Post p WHERE p.postTitle LIKE CONCAT('%' , :text , '%') OR p.postContent LIKE CONCAT('%' , :text , '%')")
     Page<Post> findAllBySearchCriteria(@Param("text") String text , Pageable pageable);
+
+    Page<Post> findAllByPostFollowedBy(@Param("user") User user , Pageable pageable);
+
+    List<Post> findPostsByPostCreationTimeLessThan(LocalDateTime postCreationTime);
+
+    Long countAllByPostSolved(boolean solved);
 }

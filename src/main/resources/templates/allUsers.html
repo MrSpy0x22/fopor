@@ -7,6 +7,8 @@
     <link type="text/css" rel="stylesheet" th:href="@{/css/sidebar.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/css/tableview.css}">
 
+    <link type="image/png" rel="icon" th:href="@{/favicon.png}">
+
     <!-- METRO4 -->
     <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
 
@@ -25,59 +27,33 @@
 
         <div class="ce-container">
             <div class="c-panel">
-                <div data-role="accordion" data-role-accordin="true" data-one-frame="false">
-                    <div class="frame">
-                        <div class="heading" style="background: transparent;">Filtrowanie</div>
-                        <div class="content">
-                            <div data-role="bottongroup">
-                                <button id="btn_size10" class="button">10</button>
-                                <button id="btn_size25" class="button active">25</button>
-                                <button id="btn_size50" class="button">50</button>
-                            </div>
-                            <select data-role="select">
-                                <option>Data</option>
-                                <option>Nazwa</option>
-                                <option>Użytkownik</option>
-                            </select>
-                            <button class="button">
-                                <span class="mif-sort-asc"></span>
-                            </button>
-                            <button class="button">
-                                <span class="mif-sort-desc"></span>
-                            </button>
-                            <button id="cat-load" class="button primary">Filtruj</button>
-                        </div>
-                    </div>
+                <div class="mb-4">
+                    <button id="btn-filter" class="float-right button border-radius-4"><span class="mif-filter"></span></button>
                 </div>
-            </div>
-            <div class="c-panel">
-                <table id="table" class="table stripped row-hover">
-                    <thead>
-                    <tr>
-                        <th> </th>
-                        <th>E-mail</th>
-                        <th>Nazwa</th>
-                        <th>Aktywowany?</th>
-                        <th>Data dołączenia</th>
-                    </tr>
-                    </thead>
-                    <tbody id="trows"></tbody>
-                </table>
+                <div id="data-view-container"> </div>
+
+                <div id="pagination-container"></div>
             </div>
         </div>
     </div>
 </div>
 
-<button id="cat-add" class="action-button primary" style="position:fixed;margin:20px;bottom:0;right:0;">
-    <span class="icon"><span class="mif-plus"></span></span>
-</button>
-
 <!-- METRO4 -->
 <script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
 <!-- My scripts -->
+<script th:src="@{/js/ui_utils.js}"></script>
+<script th:src="@{/js/filter.js}"></script>
 <script th:src="@{/js/sidebar.js}"></script>
 
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/fa
+    let isAdmin = /*[[${admin}]]*/ false;
+    /*]]>*/
+
+    let userData = null;
+    let currentPage = 0;
+    let totalPages = -1;
+
     function notifyError(text) {
         let notify = Metro.notify;
         console.error(text);
@@ -87,14 +63,130 @@
         }
     }
 
-    let pageNumber = 0;
-    let pageSize = 10;
-    let pageSort = 0;
-    let pageOrder = "asc";
-    $("#btn_size10").click(function () { pageSize = 10; } );
-    $("#btn_size25").click(function () { pageSize = 25; } );
-    $("#btn_size50").click(function () { pageSize = 50; } );
+    $(document).ready(() => { getContent() });
 
+    let selectedCategory = -1;
+
+    var getContent = (forceRecreate) => {
+        $.ajax({
+            type: "GET" ,
+            async: true ,
+            url: `/api/user?page=${currentPage}&size=${filterPageSize}` ,
+            timeout: 1000 ,
+            contentType: 'application/json; charset=utf-8'
+        }).then(function (result) {
+
+            if (typeof result === "string") {
+                let objects = JSON.parse(result);
+                let content = objects.content;
+
+                // Maks stron przy podanym ustawieniu
+                let total = objects.totalPages;
+
+                if (content === undefined) {
+                    notifyError("Nie znaleziono żadnych danych.");
+                } else {
+                    if (currentPage >= total) {
+                        currentPage = total - 1;
+                    }
+
+                    userData = content;
+                    showData();
+                    createPagination(total);
+                }
+            } else {
+                notifyError("Serwer zwrócił dane, które nie mogą zostać przetworzone.");
+            }
+        } , function (xhr) {
+            notifyError("Błąd przetwarzan9ia żądania.");
+        });
+    }
+
+    function showData() {
+        let container = $("#data-view-container").clear();
+
+        let userTableContent = $("<table>" , { id: "users" , class:"table stripped row-hover" });
+        if (isAdmin) {
+            $(userTableContent).html("<thead><th style='width:100px'> <th>E-mail</th> </th> <th>Nazwa</th> <th>Ranga</th> <th>Aktywowany?</th> <th>Data rejestracji</th></thead>");
+        } else {
+            $(userTableContent).html("<thead><th>Nazwa</th> <th>Ranga</th> <th>Aktywowany?</th> <th>Data rejestracji</th></thead>");
+        }
+       $(userTableContent).appendTo(container);
+        let tableBody = $("<tbody>").appendTo(userTableContent);
+
+        userData.forEach((d) => {
+            let row = $("<tr>" , {id: "user" + d.userId});
+            let buttons = $("<td>");
+
+            if (isAdmin) {
+                $(buttons).append(
+                    ($("<button>" , {
+                        class: "button outline secondary small" ,
+                        style: "margin-right: 3px" ,
+                        onclick: `userPopup(${d.userId} , false)`
+                    }).append($("<span>" , { class: "mif-pencil" }))));
+                $(buttons).append(
+                    ($("<button>" , {
+                        class: "button outline alert small" ,
+                        style: "margin-right: 3px" ,
+                        onclick: `userPopup(${d.userId} , true)`
+                    }).append($("<span>" , { class: "mif-bin" }))));
+            }
+
+            if (isAdmin) {
+                $(row).append(buttons);
+                $(row).append($("<td>").html(d.userMail));
+            }
+            $(row).append($("<td>").html(d.userName));
+            $(row).append($("<td>").html(d.userRole));
+            $(row).append($("<td>").html(d.userEnabled ? "Tak" : "Nie"));
+            $(row).append($("<td>").html(d.userJoinTime));
+            $(tableBody).append(row);
+        });
+    }
+
+    function userPopup(id , del) {
+        let url = typeof id == "number" && id >= 0 ? `/user?id=${id}` : "/user";
+
+        if (del != null && del) {
+            url += "&delete=true";
+        }
+
+        window.open(url , "Użytkownik" , "width=500, height=600")
+    }
+
+    function createPagination(max) {
+        if (totalPages !== max) {
+            const paginationContainer = $("#pagination-container").html("");
+
+            if (max !== 1) {
+                const paginationElement = $("<ul>" , { class: "pagination flex-justify-center" }).appendTo(paginationContainer);
+
+                for (let i = 0 ; i < max ; i++) {
+                    let contentLi = $("<li>" , { class: "page-item" });
+                    let contentA = $("<a>" , { class: "page-link"}).text(`${i + 1}`);
+
+                    if (i === currentPage) {
+                        contentLi.addClass("active");
+                    }
+
+                    $(contentLi).append(contentA);
+                    $(paginationElement).append(contentLi);
+                }
+
+                totalPages = max;
+
+                $(document).on('click','.page-link' , function() {
+                    currentPage = parseInt($(this).text()) - 1;
+
+                    $(".page-item, .active").removeClass("active");
+                    $(this).parent().addClass("active");
+
+                    getContent();
+                });
+            }
+        }
+    }
 </script>
 
 </body>

@@ -48,12 +48,12 @@ public class PostController implements ControllerTpl<Post> {
     @GetMapping("/preview")
     public Page<Post> getPreviewPage(
             @RequestParam(name = "cid" , required = false) Integer categoryId ,
-            @RequestParam(name = "solved" , required = false , defaultValue = "true") Boolean showSolved ,
+            @RequestParam(name = "solved" , required = false , defaultValue = "true") Boolean showAlsoSolved ,
             Pageable pageable) {
         if (categoryId == null || categoryId < 0) {
-            return postService.getPreviewForAll(showSolved , pageable);
+            return postService.getPreviewForAll(showAlsoSolved , pageable);
         } else {
-            return postService.getPreviewForCategory(showSolved , categoryId , pageable);
+            return postService.getPreviewForCategory(showAlsoSolved , categoryId , pageable);
         }
     }
 
@@ -85,5 +85,19 @@ public class PostController implements ControllerTpl<Post> {
     @GetMapping("/search")
     public Page<Post> findPostsByPostTitle(@RequestParam String postTitle, Pageable pageable) {
         return postService.findPostsByPostTitle(postTitle, pageable);
+    }
+
+    @GetMapping("/saved/{uid}")
+    public Page<Post> findAllSavedBy(@PathVariable("uid") Integer userId , Pageable pageable) {
+        User user = userService.getId(userId).orElse(null);
+        Page<Post> result;
+
+        if (user == null) {
+            result = null;
+        } else {
+            result = postService.getSavedByUser(user , pageable);
+        }
+
+        return result;
     }
 }

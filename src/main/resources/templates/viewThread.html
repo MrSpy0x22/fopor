@@ -8,6 +8,8 @@
     <link type="text/css" rel="stylesheet" th:href="@{/css/tableview.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/css/messages.css}">
 
+    <link type="image/png" rel="icon" th:href="@{/favicon.png}">
+
     <!-- METRO4 -->
     <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
 
@@ -80,26 +82,24 @@
 <!-- FoPor -->
 <script th:src="@{/js/ui_utils.js}"></script>
 <script th:src="@{/js/sidebar.js}"></script>
-<script th:src="@{/js/ui_utils.js}"></script>
 
 <script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
-    var postId = /*[[${post.getPostId}]]*/ -1;
-    var userId = /*[[${post_author_uid}]]*/ -1;
-    var followState = /*[[${followStatus}]]*/ false;
+    let postId = /*[[${post.postId}]]*/ -1;
+    let userId = /*[[${post_author_uid}]]*/ -1;
+    let followState = /*[[${followStatus}]]*/ false;
     /*]]>*/
     let commentsData = null;
     let currentPage = 0;
     let totalPages = -1;
 
-    let replyBtn = $("#btn-reply");
     let followBtn = $("#btn-follow");
     let followBtnSpans = $("#btn-follow span");
 
     $(followBtn).click(() => {
         if (!followState) {
             $.ajax({
-                method: "POST" ,
+                type: "GET" ,
                 async: true ,
                 url: `/api/user/follow/${postId}` ,
                 timeout: 10000 ,
@@ -112,7 +112,7 @@
             });
         } else {
             $.ajax({
-                method: "POST" ,
+                type: "GET" ,
                 async: true ,
                 url: `/api/user/unfollow/${postId}` ,
                 timeout: 10000 ,
@@ -129,10 +129,10 @@
     function updateFollowStatus() {
         if (followState) {
             $(followBtn).removeClass("outline");
-            $(followBtnSpans).last().text("Dodano zakłądkę");
+            $(followBtnSpans).last().text("Usunięto zakłądkk");
         } else {
             $(followBtn).addClass("outline");
-            $(followBtnSpans).last().text("Usunięto zakłądkęh");
+            $(followBtnSpans).last().text("Dodano zakłądkę");
         }
 
         // Update status

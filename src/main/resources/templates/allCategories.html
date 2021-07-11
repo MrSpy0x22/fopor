@@ -7,6 +7,8 @@
     <link type="text/css" rel="stylesheet" th:href="@{/css/sidebar.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/css/tableview.css}">
 
+    <link type="image/png" rel="icon" th:href="@{/favicon.png}">
+
     <!-- METRO4 -->
     <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
 
@@ -127,7 +129,7 @@
                 $(categories).appendTo(container);
 
                 categoryData.forEach((d) => {
-                    let tile = $("<a>" , { href: `/category?id=${d.categoryId}` , class: `bg-${d.categoryAccent}` })
+                    let tile = $("<div>" , { class: `bg-${d.categoryAccent}` })
                         .attr("data-role" , "tile")
                         .attr("data-id" , `${d.categoryId}`)
                         .on("contextmenu" , () => {

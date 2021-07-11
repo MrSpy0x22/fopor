@@ -6,8 +6,16 @@
     <link type="text/css" rel="stylesheet" th:href="@{/css/toolbar.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/css/sidebar.css}">
 
+    <link type="image/png" rel="icon" th:href="@{/favicon.png}">
+
     <!-- METRO4 -->
     <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
+
+    <style>
+        .step-list > li::before {
+            color: #aaa !important;
+        }
+    </style>
 
     <title>Strona główna</title>
 </head>
@@ -23,8 +31,41 @@
         <div id="page" class="content-element">
 
             <div class="ce-container">
-            </div>
+                <div class="c-panel">
+                    <button class="command-button">
+                        <span class="mif-chat icon"></span>
+                        <span class="caption">
+                            <span th:text="${postsNum}"></span>
+                            wszystkich postów
+                            <small>Napisanych przez naszych użytkowników</small>
+                        </span>
+                    </button>
+                    <button class="command-button">
+                        <span class="mif-power icon"></span>
+                        <span class="caption">
+                            <span th:text="${postsNum2}"></span>
+                            nierozwiązane
+                            <small>Potrzebujących rozwiązania</small>
+                        </span>
+                    </button>
+                    <button class="command-button">
+                        <span class="mif-user icon"></span>
+                        <span class="caption">
+                            <span th:text="${usersNum}"></span>
+                            użytkowników
+                            <small>Którzy pomagają rozwiązywać problemy</small>
+                        </span>
+                    </button>
 
+                    <h3 class="mt-3 mb-3">Najnowsze posty</h3>
+                    <ul class="step-list">
+                        <li th:each="p : ${topPosts}">
+                            <a th:href="${'/thread?id=' + p.postId}" th:text="${p.postTitle}"></a>
+                            <p th:text="${p.postContent}"></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 

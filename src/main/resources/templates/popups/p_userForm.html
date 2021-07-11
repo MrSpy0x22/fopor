@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<!---------- HEAD SECTION ---------->
+<head>
+    <!-- META -->
+    <meta charset="UTF-8">
+    <!-- STYLES -->
+    <link type="text/css" rel="stylesheet" th:href="@{/css/popup_dialog.css}">
+    <!-- METRO4 CSS -->
+    <link type="text/css" th:rel="stylesheet" th:href="@{/css/metro4/metro-4.4.3.css}">
+
+    <link type="image/png" rel="icon" th:href="@{/favicon.png}">
+    <!-- TITLE -->
+    <title>Użytkownik</title>
+</head>
+<!---------- HEAD SECTION ---------->
+<body th:with="del=${#request.getParameter('delete')}" class="bg-light">
+<div>
+    <h3 th:if="${del}" class="popup-header bg-red">Usuń użytkownika</h3>
+    <h3 th:unless="${del}" class="popup-header bg-cobalt">Zapisz użytkownika</h3>
+
+    <form method="post" th:action="@{/user}" th:object="${user}">
+        <div class="form-group">
+            <label>Nazwa:</label>
+            <input th:field="*{userName}" type="text" data-prepend="<span class='mif-tag'></span>" data-role="input"
+                   placeholder="podaj nazwę" th:disabled="${del}">
+            <input th:field="*{userId}" type="hidden">
+            <input th:field="*{userJoinTime}" type="hidden">
+            <small th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" class="fg-red">Błąd!</small>
+        </div>
+        <div class="form-group">
+            <label>E-mail:</label>
+            <input th:field="*{userMail}" type="text" data-prepend="<span class='mif-mail'></span>" data-role="input"
+                   placeholder="podaj e-mail" th:disabled="${del}">
+            <small th:if="${#fields.hasErrors('userMail')}" th:errors="*{userMail}" class="fg-red">Błąd!</small>
+        </div>
+        <div class="form-group">
+            <label>Hasło:</label>
+            <input th:field="*{userPassword}" type="password" data-prepend="<span class='mif-key'></span>" data-role="input"
+                   placeholder="podaj hasło" th:disabled="${del}">
+            <small th:if="${#fields.hasErrors('userPassword')}" th:errors="*{userPassword}" class="fg-red">Błąd!</small>
+        </div>
+        <div class="form-group">
+            <label>Rola:</label>
+            <select data-role="select" th:field="*{userRole}">
+                <option th:each="r : ${T(pl.fopor.serwis.model.UserRole).values()}" th:value="${r}" th:text="${r}">
+            </select>
+            <small th:if="${#fields.hasErrors('userRole')}" th:errors="*{userRole}" class="fg-red">Błąd!</small>
+        </div>
+        <div class="form-group">
+            <input type="checkbox" th:field="*{userEnabled}" th:checked="${user.userEnabled}" th:disabled="${del}"
+                   data-role="checkbox" data-style="2" data-caption="Użytkownik może się logować?">
+        </div>
+        <div class="form-group">
+            <button th:if="${del != null && del}" type="submit" class="button alert" name="delete">
+                <span class='mif-bin'></span>
+                <span>Usuń</span>
+            </button>
+            <button th:unless="${del}" type="submit" class="button primary">
+                <span class='mif-floppy-disk'></span>
+                <span>Zapisz</span>
+            </button>
+            <a class="button">Wyjście</a>
+        </div>
+    </form>
+</div>
+
+<!-- METRO4 -->
+<script th:src="@{/js/metro4/metro-4.4.3.js}"></script>
+
+</body>
+</html>

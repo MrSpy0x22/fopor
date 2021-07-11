@@ -65,9 +65,13 @@ public class CategoryService implements ServiceTpl<Category> {
         var result = new ArrayList<FoPorSearchResultModel>();
 
         for (var r : results.getContent()) {
-            result.add(new FoPorSearchResultModel(r.getCategoryName() , "Kategoria" , r.getCategoryCreationTime()));
+            result.add(new FoPorSearchResultModel(r.getCategoryName() , "Kategoria" , r.getCategoryCreationTime(), "/posts"));
         }
 
         return new PageImpl<>(result , pageable , result.size());
+    }
+
+    public Long countAll() {
+        return categoryRepository.count();
     }
 }

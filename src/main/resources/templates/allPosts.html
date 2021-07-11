@@ -7,6 +7,8 @@
     <link type="text/css" rel="stylesheet" th:href="@{/css/sidebar.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/css/messages.css}">
 
+    <link type="image/png" rel="icon" th:href="@{/favicon.png}">
+
     <!-- METRO4 -->
     <link th:href="@{/css/metro4/metro-4.4.3.css}" th:rel="stylesheet">
 
@@ -36,7 +38,7 @@
                             </li>
                             <li>
                                 <button id="btn-filter" class="float-right button border-radius-4"><span class="mif-filter"></span></button>
-                                <input id="solved_check" class="float-right" type="checkbox" data-role="switch" data-caption="Pokaż rozwiązane" data-caption-position="left">
+                                <input id="unsolved_check" class="float-right" type="checkbox" data-role="switch" data-caption="Tylko nierozwiązane" data-caption-position="left">
                             </li>
                         </ul>
 
@@ -60,22 +62,22 @@
         let currentPage = 0;
         let totalPages = -1;
         let categorySelected = -1;
-        let showSolved = false;
+        let unshowSolved = false;
 
         $("#categories-list").change((e) => {
             categorySelected = parseInt(e.target.value);
             getContent();
         });
 
-        $("#solved_check").change((e) => {
-            showSolved = e.target.checked;
+        $("#unsolved_check").change((e) => {
+            unshowSolved = e.target.checked;
             getContent();
         });
 
         $(document).ready(() => {
             getContent();
 
-            showSolved = $("#solved_check").is(":checked");
+            unshowSolved = $("#unsolved_check").is(":checked");
             categorySelected = parseInt($("#categories-list").val());
 
         });
@@ -84,9 +86,9 @@
             let request = "/api/post/preview?";
 
             if (isNaN(categorySelected)) {
-                request += `solved=${showSolved}`;
+                request += `solved=${!unshowSolved}`;
             } else {
-                request += `cid=${categorySelected}&solved=${showSolved}`;
+                request += `cid=${categorySelected}&solved=${!unshowSolved}`;
             }
 
             request += `&page=${currentPage}&size=${filterPageSize}`;
@@ -153,7 +155,6 @@
         }
 
         function createPagination(max) {
-            console.log("max = " + max + " total = " + totalPages);
             if (totalPages !== max) {
                 const paginationContainer = $("#pagination-container").html("");
 

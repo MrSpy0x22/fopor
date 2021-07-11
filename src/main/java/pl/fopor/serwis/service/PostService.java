@@ -9,9 +9,12 @@ import pl.fopor.serwis.model.User;
 import pl.fopor.serwis.repository.PostRepository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService implements ServiceTpl<Post> {
@@ -61,11 +64,19 @@ public class PostService implements ServiceTpl<Post> {
     }
 
     public Page<Post> getPreviewForAll(Boolean solved , Pageable pageable) {
-        return postRepository.findPreviewForAll(solved , pageable);
+        if (!solved) {
+            return postRepository.findPreviewForAll(solved , pageable);
+        } else {
+            return postRepository.findAll(pageable);
+        }
     }
 
     public Page<Post> getPreviewForCategory(Boolean solved , Integer category , Pageable pageable) {
-        return postRepository.findPreviewForCategory(solved , category , pageable);
+        if (!solved) {
+            return postRepository.findPreviewForCategory(false , category , pageable);
+        } else {
+            return postRepository.findPreviewForCategory(category , pageable);
+        }
     }
 
     public List<Post> getByFollower(User user) {
@@ -88,9 +99,27 @@ public class PostService implements ServiceTpl<Post> {
         var result = new ArrayList<FoPorSearchResultModel>();
 
         for (var r : results.getContent()) {
-            result.add(new FoPorSearchResultModel(r.getPostTitle() , "Post" , r.getPostCreationTime()));
+            result.add(new FoPorSearchResultModel(r.getPostTitle() , "Post" , r.getPostCreationTime(),
+                    "/thread?id=" + r.getPostId()));
         }
 
         return new PageImpl<>(result , PageRequest.of(pageable.getPageNumber(), 15) , result.size());
+    }
+
+    public Page<Post> getSavedByUser(User user , Pageable pageable) {
+        return postRepository.findAllByPostFollowedBy(user , pageable);
+    }
+
+    public Long countAll() {
+        return postRepository.count();
+    }
+
+    public Long countResolved() {
+        return postRepository.countAllByPostSolved(false);
+    }
+
+    public List<Post> getIndexTopResults() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        return postRepository.findPostsByPostCreationTimeLessThan(localDateTime).stream().limit(5).collect(Collectors.toList());
     }
 }
